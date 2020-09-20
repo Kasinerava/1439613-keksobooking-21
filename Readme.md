@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Mary](https://up.htmlacademy.ru/javascript/21/user/1439613).
-* Наставник: `Неизвестно`.
+* Наставник: [Дмитрий Полуэктов](https://htmlacademy.ru/profile/id1283179).
 
 ---
 
