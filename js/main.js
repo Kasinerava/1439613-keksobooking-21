@@ -29,9 +29,9 @@ const similarListElement = document.querySelector(`.map__pins`);
 const similarUserTemplate = document.querySelector(`#pin`);
 
 // Рассчитываем координаты для метки
-
-map__pin.style.left = X - PIN_WIDTH / 2;
-map__pin.style.top = Y - PIN_HEIGHT / 2;
+const mapPin = document.getElementById(`pin`);
+mapPin.style.left = (X - PIN_WIDTH / 2);
+mapPin.style.top = (Y - PIN_HEIGHT / 2);
 
 // Создаем функцию для рандомного элемента из массива
 function getRandomInteger(min, max) {
@@ -74,6 +74,7 @@ for (let i = 0; i < 8; i++) {
 
 const fragment = document.createDocumentFragment();
 for (let j = 0; j < dataArray.length; j++) {
+  const offer = dataArray[j];
   const userElement = similarUserTemplate.cloneNode(true);
   userElement.querySelector(`img`).src = offer.userAvatar;
   userElement.querySelector(`img`).alt = offer.offerTitle;
