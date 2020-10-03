@@ -22,16 +22,9 @@ const LOCATION_YMIN = 130;
 const LOCATION_YMAX = 630;
 const PIN_WIDTH = 50;
 const PIN_HEIGHT = 70;
-const X = getRandomInteger(LOCATION_XMIN, LOCATION_XMAX);
-const Y = getRandomInteger(LOCATION_YMIN, LOCATION_YMAX);
 
 const similarListElement = document.querySelector(`.map__pins`);
 const similarUserTemplate = document.querySelector(`#pin`);
-
-// Рассчитываем координаты для метки
-const mapPin = document.getElementById(`pin`);
-mapPin.style.left = (X - PIN_WIDTH / 2);
-mapPin.style.top = (Y - PIN_HEIGHT / 2);
 
 // Создаем функцию для рандомного элемента из массива
 function getRandomInteger(min, max) {
@@ -56,18 +49,26 @@ function getRandomArrayStroke(array) {
 const dataArray = [];
 for (let i = 0; i < 8; i++) {
   const offer = {
-    userAvatar: `img/avatars/user${getRandomInteger(USER_AVATARMIN, USER_AVATARMAX)}.png`,
-    offerTitle: getRandomArrayElement(OFFER_TITLE),
-    offerAddress: `${getRandomInteger(LOCATION_XMIN, LOCATION_XMAX)} ${getRandomInteger(LOCATION_YMIN, LOCATION_YMAX)}`,
-    offerPrice: getRandomArrayElement(OFFER_PRICE),
-    offerType: getRandomArrayElement(OFFER_TYPE),
-    offerRooms: getRandomArrayElement(OFFER_ROOMS),
-    offerGuests: getRandomArrayElement(OFFER_GUESTS),
-    offerCheckin: getRandomArrayElement(OFFER_CHECKIN),
-    offerCheckout: getRandomArrayElement(OFFER_CHECKOUT),
-    offerFeatures: getRandomArrayStroke(OFFER_FEATURES),
-    offerDescription: getRandomArrayElement(OFFER_DESCRIPTION),
-    offerPhotos: getRandomArrayStroke(OFFER_PHOTOS)
+    author: {
+      avatar: `img/avatars/user${getRandomInteger(USER_AVATARMIN, USER_AVATARMAX)}.png`,
+    },
+    offer: {
+      title: getRandomArrayElement(OFFER_TITLE),
+      address: `${getRandomInteger(LOCATION_YMIN, LOCATION_YMAX)} ${getRandomInteger(LOCATION_XMIN, LOCATION_XMAX)}`,
+      price: getRandomArrayElement(OFFER_PRICE),
+      type: getRandomArrayElement(OFFER_TYPE),
+      rooms: getRandomArrayElement(OFFER_ROOMS),
+      guest: getRandomArrayElement(OFFER_GUESTS),
+      checkin: getRandomArrayElement(OFFER_CHECKIN),
+      checkout: getRandomArrayElement(OFFER_CHECKOUT),
+      features: getRandomArrayStroke(OFFER_FEATURES),
+      description: getRandomArrayElement(OFFER_DESCRIPTION),
+      photos: getRandomArrayStroke(OFFER_PHOTOS)
+    },
+    location: {
+      X: getRandomInteger(LOCATION_XMIN, LOCATION_XMAX),
+      Y: getRandomInteger(LOCATION_YMIN, LOCATION_YMAX)
+    }
   };
   dataArray.push(offer);
 }
@@ -76,8 +77,11 @@ const fragment = document.createDocumentFragment();
 for (let j = 0; j < dataArray.length; j++) {
   const offer = dataArray[j];
   const userElement = similarUserTemplate.cloneNode(true);
-  userElement.querySelector(`img`).src = offer.userAvatar;
-  userElement.querySelector(`img`).alt = offer.offerTitle;
+  userElement.querySelector(`img`).src = offer.author.avatar;
+  userElement.querySelector(`img`).alt = offer.offer.title;
+
+  userElement.style.left = `(${offer.location.X - PIN_WIDTH / 2})px`;
+  userElement.style.top = `(${offer.location.Y - PIN_HEIGHT})px`;
   fragment.appendChild(userElement);
 }
 
