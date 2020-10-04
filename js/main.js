@@ -24,7 +24,7 @@ const PIN_WIDTH = 50;
 const PIN_HEIGHT = 70;
 
 const similarListElement = document.querySelector(`.map__pins`);
-const similarUserTemplate = document.querySelector(`#pin`);
+const similarUserTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
 // Создаем функцию для рандомного элемента из массива
 function getRandomInteger(min, max) {
@@ -50,7 +50,7 @@ const dataArray = [];
 for (let i = 0; i < 8; i++) {
   const offer = {
     author: {
-      avatar: `img/avatars/user${getRandomInteger(USER_AVATARMIN, USER_AVATARMAX)}.png`,
+      avatar: `img/avatars/user0${getRandomInteger(USER_AVATARMIN, USER_AVATARMAX)}.png`,
     },
     offer: {
       title: getRandomArrayElement(OFFER_TITLE),
@@ -80,8 +80,8 @@ for (let j = 0; j < dataArray.length; j++) {
   userElement.querySelector(`img`).src = offer.author.avatar;
   userElement.querySelector(`img`).alt = offer.offer.title;
 
-  userElement.style.left = `(${offer.location.X - PIN_WIDTH / 2})px`;
-  userElement.style.top = `(${offer.location.Y - PIN_HEIGHT})px`;
+  userElement.style.left = `${offer.location.X - PIN_WIDTH / 2}px`;
+  userElement.style.top = `${offer.location.Y - PIN_HEIGHT}px`;
   fragment.appendChild(userElement);
 }
 
