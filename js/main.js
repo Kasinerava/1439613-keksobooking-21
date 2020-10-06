@@ -47,12 +47,14 @@ function getRandomArrayElement(array) {
 
 // Создаем функцию рандомной строки из массива
 function getRandomArrayStroke(array) {
-  let newArray = [];
-  for (let i = 1; i <= array.length; i++) {
-    let rnd = Math.floor(Math.random() * array.length);
-    newArray.push(array[rnd]);
-    array.splice(rnd, Math.floor(Math.random() * array.length));
+  const newArray = [];
+  const arrayCopy = [...array];
+  for (let i = 1; i <= arrayCopy.length; i++) {
+    let rnd = Math.floor(Math.random() * arrayCopy.length);
+    newArray.push(arrayCopy[rnd]);
+    arrayCopy.splice(rnd, Math.floor(Math.random() * arrayCopy.length));
   }
+  return newArray;
 }
 
 // Создаем массив
@@ -100,22 +102,21 @@ similarListElement.appendChild(avatarFragment);
 
 // Создаем метод map для фич
 const featuresMap = getRandomArrayStroke(OFFER_FEATURES);
-const featuresArr = OFFER_FEATURES.map((featuresMap, i) => {
+const featuresArr = featuresMap.map((featuresMap, i) => {
   return `<li class="popup__feature popup__feature--${featuresMap}">${featuresMap}</li>`;
 });
 const featuresStr = featuresArr.join(``);
 
 // Создаем метод map для фото
 const photosMap = getRandomArrayStroke(OFFER_PHOTOS);
-const photosArr = OFFER_PHOTOS.map((photosMap, i) => {
+const photosArr = photosMap.map((photosMap, i) => {
   return `<img src="${photosMap}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`;
 });
 const photosStr = photosArr.join(``);
 
 // Создаем фрагмент с объявлением
 const cardFragment = document.createDocumentFragment();
-for (let j = 0; j < dataArray.length; j++) {
-  const offer = dataArray[j];
+function renderPopup(offer) {
   const cardElement = similarCardTemplate.cloneNode(true);
   cardElement.querySelector(`.popup__title`).textContent = offer.offer.title;
   cardElement.querySelector(`.popup__text--address`).textContent = offer.offer.address;
@@ -129,7 +130,8 @@ for (let j = 0; j < dataArray.length; j++) {
   cardElement.querySelector(`.popup__features`).innerHTML = featuresStr;
   cardElement.querySelector(`.popup__photos`).innerHTML = photosStr;
 
-  mapElement.insertBefore(cardElement, filtersElement);
+  return cardElement;
 }
+mapElement.insertBefore(renderPopup(dataArray[0]), filtersElement);
 
 filtersElement.appendChild(cardFragment);
