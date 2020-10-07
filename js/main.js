@@ -7,10 +7,10 @@ document.querySelector(`.map`).classList.remove(`map--faded`);
 const USER_AVATARMIN = 1;
 const USER_AVATARMAX = 8;
 const OFFER_TITLE = [`Для тех, кто любит приключения`, `Только работающим и одиноким душам`, `Для бесстрашных и отважных в самом центре`, `Поселившись однажды тут, не захочется уезжать из города вовсе`];
-const OFFER_PRICE = [`100`, `150`, `500`, `750`, `1000`];
+const OFFER_PRICE = [100, 150, 500, 750, 1000];
 const OFFER_TYPE = [`palace`, `flat`, `house`, `bungalow`];
-const OFFER_ROOMS = [`1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`];
-const OFFER_GUESTS = [`1`, `2`, `3`];
+const OFFER_ROOMS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const OFFER_GUESTS = [1, 2, 3];
 const OFFER_CHECKIN = [`12:00`, `13:00`, `14:00`];
 const OFFER_CHECKOUT = [`12:00`, `13:00`, `14:00`];
 const OFFER_FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
@@ -101,6 +101,21 @@ for (let j = 0; j < dataArray.length; j++) {
 
 similarListElement.appendChild(avatarFragment);
 
+// Функция для склонения
+function declOfNum(n, textForms) {
+  n = Math.abs(n) % 100; let n1 = n % 10;
+  if (n > 10 && n < 20) {
+    return textForms[2];
+  }
+  if (n1 > 1 && n1 < 5) {
+    return textForms[1];
+  }
+  if (n1 === 1) {
+    return textForms[0];
+  }
+  return textForms[2];
+}
+
 // Создаем фрагмент с объявлением
 const cardFragment = document.createDocumentFragment();
 function renderPopup(rentItem) {
@@ -113,37 +128,12 @@ function renderPopup(rentItem) {
     return `<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`;
   });
 
-  const roomsText = function declOfNum(n, textRooms) {
-    n = Math.abs(rentItem.offer.rooms) % 100;
-    let n1 = n % 10;
-    textRooms = [`комнаты`, `комнат`, `комната`];
-    if (n === 1) {
-      return textRooms[2];
-    }
-    if (n1 === 0 && n > 4) {
-      return textRooms[1];
-    }
-    if (n1 === 2 || n1 === 3 || n1 === 4) {
-      return textRooms[0];
-    }
-    return textRooms[1];
-  };
-
-  const guestsText = function declOfNum(j, textGuests) {
-    j = Math.abs(rentItem.offer.guests) % 100;
-    textGuests = [`гостя`, `гостей`];
-    if (j === 1) {
-      return textGuests[0];
-    }
-    return textGuests[1];
-  };
-
   const cardElement = similarCardTemplate.cloneNode(true);
   cardElement.querySelector(`.popup__title`).textContent = rentItem.offer.title;
   cardElement.querySelector(`.popup__text--address`).textContent = rentItem.offer.address;
   cardElement.querySelector(`.popup__text--price`).textContent = `${rentItem.offer.price}₽/ночь`;
   cardElement.querySelector(`.popup__type`).textContent = TYPE_MAP[rentItem.offer.type];
-  cardElement.querySelector(`.popup__text--capacity`).textContent = `${rentItem.offer.rooms} ${roomsText()} для ${rentItem.offer.guests} ${guestsText()}`;
+  cardElement.querySelector(`.popup__text--capacity`).textContent = `${rentItem.offer.rooms} ${declOfNum(rentItem.offer.rooms, [`комната`, `комнаты`, `комнат`])} для ${rentItem.offer.guests} ${declOfNum(rentItem.offer.guests, [`гостя`, `гостей`, `гостей`])}`;
   cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${rentItem.offer.checkin}, выезд до ${rentItem.offer.checkout}`;
   cardElement.querySelector(`.popup__description`).textContent = rentItem.offer.description;
   cardElement.querySelector(`.popup__avatar`).src = rentItem.author.avatar;
