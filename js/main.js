@@ -116,10 +116,8 @@ function declOfNum(n, textForms) {
   return textForms[2];
 }
 
-// Создаем фрагмент с объявлением
-const cardFragment = document.createDocumentFragment();
+// Объявление
 function renderPopup(rentItem) {
-
   const featuresArr = rentItem.offer.features.map((feature) => {
     return `<li class="popup__feature popup__feature--${feature}">${feature}</li>`;
   });
@@ -145,4 +143,3 @@ function renderPopup(rentItem) {
 }
 mapElement.insertBefore(renderPopup(dataArray[0]), filtersElement);
 
-filtersElement.appendChild(cardFragment);
