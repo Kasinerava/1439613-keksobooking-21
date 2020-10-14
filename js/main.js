@@ -1,7 +1,20 @@
 'use strict';
 
-// Включаем активное состояние карты
-document.querySelector(`.map`).classList.remove(`map--faded`);
+// Определяем константы
+const similarListElement = document.querySelector(`.map__pins`);
+const similarUserTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
+const similarCardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
+const mapElement = document.querySelector(`.map`);
+const filtersElement = document.querySelector(`.map__filters-container`);
+const adForm = document.querySelector(`.ad-form`);
+const adFormAll = document.querySelectorAll(`.ad-form`);
+const adFormAddress = adForm.querySelector(`#address`);
+const mapFilters = document.querySelector(`.map__filters`);
+const button = similarListElement.querySelector(`.map__pin--main`);
+const adFormElement = document.querySelector(`.ad-form__element`);
+const guestsCapacity = adFormElement.querySelector(`#capacity`);
+const roomsNumber = adFormElement.querySelector(`#room_number`);
+const formSubmit = adFormElement.querySelector(`.ad-form__submit`);
 
 // Создаем массив данных для объявления
 const USER_AVATARMIN = 1;
@@ -20,8 +33,10 @@ const LOCATION_XMIN = 0;
 const LOCATION_XMAX = 1200;
 const LOCATION_YMIN = 130;
 const LOCATION_YMAX = 630;
-const PIN_WIDTH = 50;
-const PIN_HEIGHT = 70;
+const ARROW_HEIGHT = 18;
+const PIN_WIDTH = 65;
+const PIN_HEIGHT = 65;
+const PIN_TAIL = 20;
 const TYPE_MAP = {
   palace: `Дворец`,
   flat: `Квартира`,
@@ -29,12 +44,88 @@ const TYPE_MAP = {
   bungalow: `Бунгало`
 };
 
-// Определяем куда отрисовать и шаблоны
-const similarListElement = document.querySelector(`.map__pins`);
-const similarUserTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
-const similarCardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
-const mapElement = document.querySelector(`.map`);
-const filtersElement = document.querySelector(`.map__filters-container`);
+// Параметры главной метки
+const mapPin = {
+  PIN_WIDTH,
+  PIN_HEIGHT,
+  ARROW_HEIGHT,
+  BLOCK: document.querySelector(`.map__pin--main`)
+};
+
+// Фунцкия разблокировки карты
+const getMapOpen = function () {
+  document.querySelector(`.map`).classList.remove(`map--faded`);
+};
+
+// Переводим в неактивное состояние остальные элементы
+// adForm.classList.add(`ad-form--disabled`);
+// adFormAll.setAttribute("disabled", "disabled");
+// mapFilters.setAttribute("disabled", "disabled");
+
+// Вычисление серидины пина
+const PIN_LOCATION_X = parseInt(button.style.left) - PIN_WIDTH / 2;
+const PIN_LOCATION_Y = parseInt(button.style.top) - PIN_HEIGHT / 2;
+
+// Функция вычисления адреса
+const getAddress = function () {
+  adFormAddress.value = `${PIN_LOCATION_X}, ${PIN_LOCATION_Y}`;
+};
+getAddress();
+
+
+// Переводим по клику в активное состояние карту
+button.addEventListener(`mousedown`, function (event) {
+  if (event.which === 1) {
+    getMapOpen();
+    adFormAddress.value = `${PIN_LOCATION_X}, ${PIN_LOCATION_Y + PIN_TAIL}`;
+    adForm.classList.remove(`ad-form--disabled`);
+  }
+});
+
+// Переводим по нажатию клавиши в активное состояние карту
+button.addEventListener(`keydown`, function (event) {
+  if (event.which === 13) {
+    getMapOpen();
+    adFormAddress.value = `${PIN_LOCATION_X}, ${PIN_LOCATION_Y + PIN_TAIL}`;
+    adForm.classList.remove(`ad-form--disabled`);
+  }
+});
+
+// Валидация комнат
+formSubmit.addEventListener(`submit`, function () {
+  if (guestsCapacity.value === 1 && roomsNumber.value > 1) {
+    roomsNumber.setCustomValidity(`Это плохо`);
+  } else if (guestsCapacity.value === 2 && roomsNumber.value > 2) {
+    roomsNumber.setCustomValidity(`Это плохо`);
+  } else if (guestsCapacity.value === 3 && roomsNumber.value > 3) {
+    roomsNumber.setCustomValidity(`Это плохо`);
+  } else if (guestsCapacity.value === 0 && roomsNumber.value < 100) {
+    roomsNumber.setCustomValidity(`Это плохо`);
+  } else {
+    roomsNumber.setCustomValidity(`Так тоже плохо`);
+  }
+});
+
+// Перетаскивание главного маркера
+// window.ondragstart(mapPin.BLOCK, {
+//   parentBlock: document.querySelector(`.map__pins`),
+//   direction: `both`,
+//   outputField: adFormAddress,
+//   OffsetCoord: {
+//     X: mapPin.PIN_WIDTH / 2,
+//     Y: mapPin.PIN_HEIGHT + mapPin.ARROW_HEIGHT
+//   },
+//   AvailableCoord: {
+//     X: {
+//       MIN: LocationData.X.MIN,
+//       MAX: LocationData.X.MAX
+//     },
+//     Y: {
+//       MIN: LocationData.Y.LOCATION_XMIN - mapPin.PIN_HEIGHT - mapPin.ARROW_HEIGHT,
+//       MAX: LocationData.Y.LOCATION_XMAX - mapPin.PIN_HEIGHT - mapPin.ARROW_HEIGHT,
+//     }
+//   }
+// });
 
 // Создаем функцию для рандомного элемента из массива
 function getRandomInteger(min, max) {
@@ -101,6 +192,7 @@ for (let j = 0; j < dataArray.length; j++) {
 
 similarListElement.appendChild(avatarFragment);
 
+
 // Функция для склонения
 function declOfNum(n, textForms) {
   n = Math.abs(n) % 100; let n1 = n % 10;
@@ -117,29 +209,29 @@ function declOfNum(n, textForms) {
 }
 
 // Объявление
-function renderPopup(rentItem) {
-  const featuresArr = rentItem.offer.features.map((feature) => {
-    return `<li class="popup__feature popup__feature--${feature}">${feature}</li>`;
-  });
-
-  const photosArr = rentItem.offer.photos.map((photo) => {
-    return `<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`;
-  });
-
-  const cardElement = similarCardTemplate.cloneNode(true);
-  cardElement.querySelector(`.popup__title`).textContent = rentItem.offer.title;
-  cardElement.querySelector(`.popup__text--address`).textContent = rentItem.offer.address;
-  cardElement.querySelector(`.popup__text--price`).textContent = `${rentItem.offer.price}₽/ночь`;
-  cardElement.querySelector(`.popup__type`).textContent = TYPE_MAP[rentItem.offer.type];
-  cardElement.querySelector(`.popup__text--capacity`).textContent = `${rentItem.offer.rooms} ${declOfNum(rentItem.offer.rooms, [`комната`, `комнаты`, `комнат`])} для ${rentItem.offer.guests} ${declOfNum(rentItem.offer.guests, [`гостя`, `гостей`, `гостей`])}`;
-  cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${rentItem.offer.checkin}, выезд до ${rentItem.offer.checkout}`;
-  cardElement.querySelector(`.popup__description`).textContent = rentItem.offer.description;
-  cardElement.querySelector(`.popup__avatar`).src = rentItem.author.avatar;
-
-  cardElement.querySelector(`.popup__features`).innerHTML = featuresArr.join(``);
-  cardElement.querySelector(`.popup__photos`).innerHTML = photosArr.join(``);
-
-  return cardElement;
-}
-mapElement.insertBefore(renderPopup(dataArray[0]), filtersElement);
+// function renderPopup(rentItem) {
+//   const featuresArr = rentItem.offer.features.map((feature) => {
+//     return `<li class="popup__feature popup__feature--${feature}">${feature}</li>`;
+//   });
+//
+//   const photosArr = rentItem.offer.photos.map((photo) => {
+//     return `<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`;
+//   });
+//
+//   const cardElement = similarCardTemplate.cloneNode(true);
+//   cardElement.querySelector(`.popup__title`).textContent = rentItem.offer.title;
+//   cardElement.querySelector(`.popup__text--address`).textContent = rentItem.offer.address;
+//   cardElement.querySelector(`.popup__text--price`).textContent = `${rentItem.offer.price}₽/ночь`;
+//   cardElement.querySelector(`.popup__type`).textContent = TYPE_MAP[rentItem.offer.type];
+//   cardElement.querySelector(`.popup__text--capacity`).textContent = `${rentItem.offer.rooms} ${declOfNum(rentItem.offer.rooms, [`комната`, `комнаты`, `комнат`])} для ${rentItem.offer.guests} ${declOfNum(rentItem.offer.guests, [`гостя`, `гостей`, `гостей`])}`;
+//   cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${rentItem.offer.checkin}, выезд до ${rentItem.offer.checkout}`;
+//   cardElement.querySelector(`.popup__description`).textContent = rentItem.offer.description;
+//   cardElement.querySelector(`.popup__avatar`).src = rentItem.author.avatar;
+//
+//   cardElement.querySelector(`.popup__features`).innerHTML = featuresArr.join(``);
+//   cardElement.querySelector(`.popup__photos`).innerHTML = photosArr.join(``);
+//
+//   return cardElement;
+// }
+// mapElement.insertBefore(renderPopup(dataArray[0]), filtersElement);
 
