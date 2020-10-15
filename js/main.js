@@ -12,8 +12,8 @@ const adFormAddress = adForm.querySelector(`#address`);
 const mapFilters = document.querySelector(`.map__filters`);
 const button = similarListElement.querySelector(`.map__pin--main`);
 const adFormElement = document.querySelector(`.ad-form__element`);
-const guestsCapacity = adFormElement.querySelector(`#capacity`);
-const roomsNumber = adFormElement.querySelector(`#room_number`);
+const guestsCapacity = adForm.querySelector(`#capacity`);
+const roomsForGuests = adForm.querySelector(`#room_number`);
 const formSubmit = adFormElement.querySelector(`.ad-form__submit`);
 
 // Создаем массив данных для объявления
@@ -85,6 +85,7 @@ button.addEventListener(`mousedown`, function (event) {
       field.removeAttribute(`disabled`, `disabled`);
     }
     mapFilters.removeAttribute(`disabled`, `disabled`);
+    getAvatarFragment();
   }
 });
 
@@ -98,22 +99,29 @@ button.addEventListener(`keydown`, function (event) {
       field.removeAttribute(`disabled`, `disabled`);
     }
     mapFilters.removeAttribute(`disabled`, `disabled`);
+    getAvatarFragment();
   }
 });
 
 // Валидация комнат
-adForm.addEventListener(`submit`, function () {
+adForm.addEventListener(`submit`, function (event) {
   event.preventDefault();
-  if (roomsNumber.value === `1` && guestsCapacity.value === `1`) {
-    roomsNumber.setCustomValidity(`Это плохо`);
-  } else if (guestsCapacity.value === `2` && roomsNumber.value > 2) {
-    roomsNumber.setCustomValidity(`Это плохо`);
-  } else if (guestsCapacity.value === `3` && roomsNumber.value > 3) {
-    roomsNumber.setCustomValidity(`Это плохо`);
-  } else if (guestsCapacity.value === `0` && roomsNumber.value === `100`) {
-    roomsNumber.setCustomValidity(`Это плохо`);
+  const guestsCapacityNumber = Number(guestsCapacity.value);
+  const roomsForGuestsNumber = Number(roomsForGuests.value);
+
+  if (guestsCapacityNumber === 1 && roomsForGuestsNumber === 100) {
+    roomsForGuests.setCustomValidity(`Слишком много комнат для одного человека. Выбери поменьше`);
+  } else if (guestsCapacityNumber === 2 && roomsForGuestsNumber < 2) {
+    roomsForGuests.setCustomValidity(`Вы не поместитесь, выбери больше комнат`);
+  } else if (guestsCapacityNumber === 2 && roomsForGuestsNumber > 3) {
+    roomsForGuests.setCustomValidity(`Слишком много комнат для такого количества людей, выбери местечко поменьше`);
+  } else if (guestsCapacityNumber === 3 && roomsForGuestsNumber !== 3) {
+    roomsForGuests.setCustomValidity(`Вам подойдет только место с тремя комнатами`);
+  } else if (guestsCapacityNumber === 0 && roomsForGuestsNumber < 100) {
+    roomsForGuests.setCustomValidity(`Этот замок не для гостей`);
   } else {
-    roomsNumber.setCustomValidity(`Так тоже плохо`);
+    event.target.submit();
+    // console.log("Класс");
   }
 });
 
