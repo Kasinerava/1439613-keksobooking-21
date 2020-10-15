@@ -7,7 +7,7 @@ const similarCardTemplate = document.querySelector(`#card`).content.querySelecto
 const mapElement = document.querySelector(`.map`);
 const filtersElement = document.querySelector(`.map__filters-container`);
 const adForm = document.querySelector(`.ad-form`);
-const adFormAll = document.querySelectorAll(`.ad-form`);
+const adFormFields = adForm.querySelectorAll(`fieldset`);
 const adFormAddress = adForm.querySelector(`#address`);
 const mapFilters = document.querySelector(`.map__filters`);
 const button = similarListElement.querySelector(`.map__pin--main`);
@@ -22,8 +22,8 @@ const USER_AVATARMAX = 8;
 const OFFER_TITLE = [`Для тех, кто любит приключения`, `Только работающим и одиноким душам`, `Для бесстрашных и отважных в самом центре`, `Поселившись однажды тут, не захочется уезжать из города вовсе`];
 const OFFER_PRICE = [100, 150, 500, 750, 1000];
 const OFFER_TYPE = [`palace`, `flat`, `house`, `bungalow`];
-const OFFER_ROOMS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const OFFER_GUESTS = [1, 2, 3];
+const OFFER_ROOMS = [1, 2, 3, 100];
+const OFFER_GUESTS = [1, 2, 3, 0];
 const OFFER_CHECKIN = [`12:00`, `13:00`, `14:00`];
 const OFFER_CHECKOUT = [`12:00`, `13:00`, `14:00`];
 const OFFER_FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
@@ -58,9 +58,11 @@ const getMapOpen = function () {
 };
 
 // Переводим в неактивное состояние остальные элементы
-// adForm.classList.add(`ad-form--disabled`);
-// adFormAll.setAttribute("disabled", "disabled");
-// mapFilters.setAttribute("disabled", "disabled");
+adForm.classList.add(`ad-form--disabled`);
+for (let field of adFormFields) {
+  field.setAttribute(`disabled`, `disabled`);
+}
+mapFilters.setAttribute(`disabled`, `disabled`);
 
 // Вычисление серидины пина
 const PIN_LOCATION_X = parseInt(button.style.left) - PIN_WIDTH / 2;
@@ -79,6 +81,10 @@ button.addEventListener(`mousedown`, function (event) {
     getMapOpen();
     adFormAddress.value = `${PIN_LOCATION_X}, ${PIN_LOCATION_Y + PIN_TAIL}`;
     adForm.classList.remove(`ad-form--disabled`);
+    for (let field of adFormFields) {
+      field.removeAttribute(`disabled`, `disabled`);
+    }
+    mapFilters.removeAttribute(`disabled`, `disabled`);
   }
 });
 
@@ -88,18 +94,23 @@ button.addEventListener(`keydown`, function (event) {
     getMapOpen();
     adFormAddress.value = `${PIN_LOCATION_X}, ${PIN_LOCATION_Y + PIN_TAIL}`;
     adForm.classList.remove(`ad-form--disabled`);
+    for (let field of adFormFields) {
+      field.removeAttribute(`disabled`, `disabled`);
+    }
+    mapFilters.removeAttribute(`disabled`, `disabled`);
   }
 });
 
 // Валидация комнат
-formSubmit.addEventListener(`submit`, function () {
-  if (guestsCapacity.value === 1 && roomsNumber.value > 1) {
+adForm.addEventListener(`submit`, function () {
+  event.preventDefault();
+  if (roomsNumber.value === `1` && guestsCapacity.value === `1`) {
     roomsNumber.setCustomValidity(`Это плохо`);
-  } else if (guestsCapacity.value === 2 && roomsNumber.value > 2) {
+  } else if (guestsCapacity.value === `2` && roomsNumber.value > 2) {
     roomsNumber.setCustomValidity(`Это плохо`);
-  } else if (guestsCapacity.value === 3 && roomsNumber.value > 3) {
+  } else if (guestsCapacity.value === `3` && roomsNumber.value > 3) {
     roomsNumber.setCustomValidity(`Это плохо`);
-  } else if (guestsCapacity.value === 0 && roomsNumber.value < 100) {
+  } else if (guestsCapacity.value === `0` && roomsNumber.value === `100`) {
     roomsNumber.setCustomValidity(`Это плохо`);
   } else {
     roomsNumber.setCustomValidity(`Так тоже плохо`);
@@ -178,20 +189,21 @@ for (let i = 0; i < 8; i++) {
 }
 
 // Создаем фрагмет с аватаркой
-const avatarFragment = document.createDocumentFragment();
-for (let j = 0; j < dataArray.length; j++) {
-  const rentItem = dataArray[j];
-  const userElement = similarUserTemplate.cloneNode(true);
-  userElement.querySelector(`img`).src = rentItem.author.avatar;
-  userElement.querySelector(`img`).alt = rentItem.offer.title;
+const getAvatarFragment = function () {
+  const avatarFragment = document.createDocumentFragment();
+  for (let j = 0; j < dataArray.length; j++) {
+    const rentItem = dataArray[j];
+    const userElement = similarUserTemplate.cloneNode(true);
+    userElement.querySelector(`img`).src = rentItem.author.avatar;
+    userElement.querySelector(`img`).alt = rentItem.offer.title;
 
-  userElement.style.left = `${rentItem.location.X - PIN_WIDTH / 2}px`;
-  userElement.style.top = `${rentItem.location.Y - PIN_HEIGHT}px`;
-  avatarFragment.appendChild(userElement);
-}
+    userElement.style.left = `${rentItem.location.X - PIN_WIDTH / 2}px`;
+    userElement.style.top = `${rentItem.location.Y - PIN_HEIGHT}px`;
+    avatarFragment.appendChild(userElement);
+  }
 
-similarListElement.appendChild(avatarFragment);
-
+  similarListElement.appendChild(avatarFragment);
+};
 
 // Функция для склонения
 function declOfNum(n, textForms) {
