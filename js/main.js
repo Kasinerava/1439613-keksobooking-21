@@ -102,6 +102,34 @@ button.addEventListener(`keydown`, function (event) {
   }
 });
 
+// Создаем массив
+const dataArray = [];
+for (let i = 0; i < 8; i++) {
+  const rentItem = {
+    author: {
+      avatar: `img/avatars/user0${getRandomInteger(USER_AVATARMIN, USER_AVATARMAX)}.png`,
+    },
+    offer: {
+      title: getRandomArrayElement(OFFER_TITLE),
+      address: `${getRandomInteger(LOCATION_YMIN, LOCATION_YMAX)} ${getRandomInteger(LOCATION_XMIN, LOCATION_XMAX)}`,
+      price: getRandomArrayElement(OFFER_PRICE),
+      type: getRandomArrayElement(OFFER_TYPE),
+      rooms: getRandomArrayElement(OFFER_ROOMS),
+      guests: getRandomArrayElement(OFFER_GUESTS),
+      checkin: getRandomArrayElement(OFFER_CHECKIN),
+      checkout: getRandomArrayElement(OFFER_CHECKOUT),
+      features: getRandomArrayStroke(OFFER_FEATURES),
+      description: getRandomArrayElement(OFFER_DESCRIPTION),
+      photos: getRandomArrayStroke(OFFER_PHOTOS)
+    },
+    location: {
+      X: getRandomInteger(LOCATION_XMIN, LOCATION_XMAX),
+      Y: getRandomInteger(LOCATION_YMIN, LOCATION_YMAX)
+    }
+  };
+  dataArray.push(rentItem);
+}
+
 // Создаем фрагмет с аватаркой
 const getAvatarFragment = function () {
   const avatarFragment = document.createDocumentFragment();
@@ -182,34 +210,6 @@ function getRandomArrayStroke(array) {
     result.push(randomElement);
   }
   return result;
-}
-
-// Создаем массив
-const dataArray = [];
-for (let i = 0; i < 8; i++) {
-  const rentItem = {
-    author: {
-      avatar: `img/avatars/user0${getRandomInteger(USER_AVATARMIN, USER_AVATARMAX)}.png`,
-    },
-    offer: {
-      title: getRandomArrayElement(OFFER_TITLE),
-      address: `${getRandomInteger(LOCATION_YMIN, LOCATION_YMAX)} ${getRandomInteger(LOCATION_XMIN, LOCATION_XMAX)}`,
-      price: getRandomArrayElement(OFFER_PRICE),
-      type: getRandomArrayElement(OFFER_TYPE),
-      rooms: getRandomArrayElement(OFFER_ROOMS),
-      guests: getRandomArrayElement(OFFER_GUESTS),
-      checkin: getRandomArrayElement(OFFER_CHECKIN),
-      checkout: getRandomArrayElement(OFFER_CHECKOUT),
-      features: getRandomArrayStroke(OFFER_FEATURES),
-      description: getRandomArrayElement(OFFER_DESCRIPTION),
-      photos: getRandomArrayStroke(OFFER_PHOTOS)
-    },
-    location: {
-      X: getRandomInteger(LOCATION_XMIN, LOCATION_XMAX),
-      Y: getRandomInteger(LOCATION_YMIN, LOCATION_YMAX)
-    }
-  };
-  dataArray.push(rentItem);
 }
 
 // Функция для склонения
