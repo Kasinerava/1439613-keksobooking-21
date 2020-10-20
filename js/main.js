@@ -74,6 +74,13 @@ const getAddress = function () {
 };
 getAddress();
 
+// Функция активации полей
+const getFieldsetActive = function() {
+  for (let field of adFormFields) {
+    field.removeAttribute(`disabled`, `disabled`);
+  }
+  mapFilters.removeAttribute(`disabled`, `disabled`);
+}
 
 // Переводим по клику в активное состояние карту
 button.addEventListener(`mousedown`, function (event) {
@@ -81,11 +88,7 @@ button.addEventListener(`mousedown`, function (event) {
     getMapOpen();
     adFormAddress.value = `${PIN_LOCATION_X}, ${PIN_LOCATION_Y + PIN_TAIL}`;
     adForm.classList.remove(`ad-form--disabled`);
-    for (let field of adFormFields) {
-      field.removeAttribute(`disabled`, `disabled`);
-    }
-    mapFilters.removeAttribute(`disabled`, `disabled`);
-    getAvatarFragment();
+    getFieldsetActive();
   }
 });
 
@@ -95,17 +98,30 @@ button.addEventListener(`keydown`, function (event) {
     getMapOpen();
     adFormAddress.value = `${PIN_LOCATION_X}, ${PIN_LOCATION_Y + PIN_TAIL}`;
     adForm.classList.remove(`ad-form--disabled`);
-    for (let field of adFormFields) {
-      field.removeAttribute(`disabled`, `disabled`);
-    }
-    mapFilters.removeAttribute(`disabled`, `disabled`);
-    getAvatarFragment();
+    getFieldsetActive();
   }
 });
 
+// Создаем фрагмет с аватаркой
+const getAvatarFragment = function () {
+  const avatarFragment = document.createDocumentFragment();
+  for (let j = 0; j < dataArray.length; j++) {
+    const rentItem = dataArray[j];
+    const userElement = similarUserTemplate.cloneNode(true);
+    userElement.querySelector(`img`).src = rentItem.author.avatar;
+    userElement.querySelector(`img`).alt = rentItem.offer.title;
+
+    userElement.style.left = `${rentItem.location.X - PIN_WIDTH / 2}px`;
+    userElement.style.top = `${rentItem.location.Y - PIN_HEIGHT}px`;
+    avatarFragment.appendChild(userElement);
+  }
+
+  similarListElement.appendChild(avatarFragment);
+};
+getAvatarFragment();
+
 // Валидация комнат
-adForm.addEventListener(`submit`, function (event) {
-  event.preventDefault();
+function validateRooms () {
   const guestsCapacityNumber = Number(guestsCapacity.value);
   const roomsForGuestsNumber = Number(roomsForGuests.value);
 
@@ -120,10 +136,10 @@ adForm.addEventListener(`submit`, function (event) {
   } else if (guestsCapacityNumber === 0 && roomsForGuestsNumber < 100) {
     roomsForGuests.setCustomValidity(`Этот замок не для гостей`);
   } else {
-    event.target.submit();
-    // console.log("Класс");
+    roomsForGuests.setCustomValidity(``);
   }
-});
+}
+validateRooms();
 
 // Перетаскивание главного маркера
 // window.ondragstart(mapPin.BLOCK, {
@@ -195,23 +211,6 @@ for (let i = 0; i < 8; i++) {
   };
   dataArray.push(rentItem);
 }
-
-// Создаем фрагмет с аватаркой
-const getAvatarFragment = function () {
-  const avatarFragment = document.createDocumentFragment();
-  for (let j = 0; j < dataArray.length; j++) {
-    const rentItem = dataArray[j];
-    const userElement = similarUserTemplate.cloneNode(true);
-    userElement.querySelector(`img`).src = rentItem.author.avatar;
-    userElement.querySelector(`img`).alt = rentItem.offer.title;
-
-    userElement.style.left = `${rentItem.location.X - PIN_WIDTH / 2}px`;
-    userElement.style.top = `${rentItem.location.Y - PIN_HEIGHT}px`;
-    avatarFragment.appendChild(userElement);
-  }
-
-  similarListElement.appendChild(avatarFragment);
-};
 
 // Функция для склонения
 function declOfNum(n, textForms) {
