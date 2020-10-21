@@ -82,6 +82,14 @@ const getFieldsetActive = function() {
   mapFilters.removeAttribute(`disabled`, `disabled`);
 }
 
+// Валидация комнат и гостей
+roomsForGuests.addEventListener(`change`, function () {
+  validateRooms();
+});
+guestsCapacity.addEventListener(`change`, function () {
+  validateRooms();
+});
+
 // Переводим по клику в активное состояние карту
 button.addEventListener(`mousedown`, function (event) {
   if (event.which === 1) {
