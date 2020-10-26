@@ -9,12 +9,19 @@ const filtersElement = document.querySelector(`.map__filters-container`);
 const adForm = document.querySelector(`.ad-form`);
 const adFormFields = adForm.querySelectorAll(`fieldset`);
 const adFormAddress = adForm.querySelector(`#address`);
+const typeHouse = adForm.querySelector(`#type`);
+const priceFields = adForm.querySelector(`#price`);
+const checkIn = adForm.querySelector(`#timein`);
+const checkOut = adForm.querySelector(`#timeout`);
 const mapFilters = document.querySelector(`.map__filters`);
 const button = similarListElement.querySelector(`.map__pin--main`);
 const adFormElement = document.querySelector(`.ad-form__element`);
 const guestsCapacity = adForm.querySelector(`#capacity`);
 const roomsForGuests = adForm.querySelector(`#room_number`);
 const formSubmit = adFormElement.querySelector(`.ad-form__submit`);
+const popupClose = similarCardTemplate.querySelector(`.popup__close`);
+const mapWindow = document.querySelector(`.map`);
+const adArticles = similarListElement.querySelector(`article`);
 
 // Создаем массив данных для объявления
 const USER_AVATARMIN = 1;
@@ -43,6 +50,18 @@ const TYPE_MAP = {
   house: `Дом`,
   bungalow: `Бунгало`
 };
+
+const FLAT_INDEX = 1;
+const BUNGALOW_INDEX = 0;
+const HOUSE_INDEX = 2;
+const PALACE_INDEX = 3;
+
+const BUNGALOW_MIN_PRICE = 0;
+const FLAT_MIN_PRICE = 1000;
+const HOUSE_MIN_PRICE = 5000;
+const PALACE_MIN_PRICE = 10000;
+
+const MAX_PRICE = 1000000;
 
 // Параметры главной метки
 const mapPin = {
@@ -75,12 +94,12 @@ const getAddress = function () {
 getAddress();
 
 // Функция активации полей
-const getFieldsetActive = function() {
+const getFieldsetActive = function () {
   for (let field of adFormFields) {
     field.removeAttribute(`disabled`, `disabled`);
   }
   mapFilters.removeAttribute(`disabled`, `disabled`);
-}
+};
 
 // Валидация комнат и гостей
 roomsForGuests.addEventListener(`change`, function () {
@@ -149,6 +168,7 @@ const getAvatarFragment = function () {
 
     userElement.style.left = `${rentItem.location.X - PIN_WIDTH / 2}px`;
     userElement.style.top = `${rentItem.location.Y - PIN_HEIGHT}px`;
+    userElement.dataset.id = j;
     avatarFragment.appendChild(userElement);
   }
 
@@ -157,7 +177,7 @@ const getAvatarFragment = function () {
 getAvatarFragment();
 
 // Валидация комнат
-function validateRooms () {
+function validateRooms() {
   const guestsCapacityNumber = Number(guestsCapacity.value);
   const roomsForGuestsNumber = Number(roomsForGuests.value);
 
@@ -176,6 +196,46 @@ function validateRooms () {
   }
 }
 validateRooms();
+
+// Установление минимальной цены при выбранном типе жилья
+const priceChangeHandler = function () {
+  if (typeHouse.selectedIndex === BUNGALOW_INDEX) {
+    priceFields.setAttribute(`min`, String(BUNGALOW_MIN_PRICE));
+    priceFields.placeholder = `0`;
+  }
+  if (typeHouse.selectedIndex === FLAT_INDEX) {
+    priceFields.setAttribute(`min`, String(FLAT_MIN_PRICE));
+    priceFields.placeholder = `1 000`;
+  }
+  if (typeHouse.selectedIndex === HOUSE_INDEX) {
+    priceFields.setAttribute(`min`, String(HOUSE_MIN_PRICE));
+    priceFields.placeholder = `5 000`;
+  }
+  if (typeHouse.selectedIndex === PALACE_INDEX) {
+    priceFields.setAttribute(`min`, String(PALACE_MIN_PRICE));
+    priceFields.placeholder = `10 000`;
+  }
+};
+typeHouse.addEventListener(`input`, priceChangeHandler);
+
+// Установление максимальной цены за ночь
+priceFields.setAttribute(`max`, String(MAX_PRICE));
+priceFields.addEventListener(`input`, function (evt) {
+  const target = evt.target;
+  if (target.value > MAX_PRICE) {
+    target.setCustomValidity(`Невозможно установить цену больше, чем ` + MAX_PRICE);
+  } else {
+    target.setCustomValidity(``);
+  }
+});
+
+// Синхронизация времени въезда и выезда
+checkIn.addEventListener(`change`, function (evt) {
+  checkOut.value = evt.target.value;
+});
+checkOut.addEventListener(`change`, function (evt) {
+  checkIn.value = evt.target.value;
+});
 
 // Перетаскивание главного маркера
 // window.ondragstart(mapPin.BLOCK, {
@@ -236,29 +296,52 @@ function declOfNum(n, textForms) {
 }
 
 // Объявление
-// function renderPopup(rentItem) {
-//   const featuresArr = rentItem.offer.features.map((feature) => {
-//     return `<li class="popup__feature popup__feature--${feature}">${feature}</li>`;
-//   });
-//
-//   const photosArr = rentItem.offer.photos.map((photo) => {
-//     return `<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`;
-//   });
-//
-//   const cardElement = similarCardTemplate.cloneNode(true);
-//   cardElement.querySelector(`.popup__title`).textContent = rentItem.offer.title;
-//   cardElement.querySelector(`.popup__text--address`).textContent = rentItem.offer.address;
-//   cardElement.querySelector(`.popup__text--price`).textContent = `${rentItem.offer.price}₽/ночь`;
-//   cardElement.querySelector(`.popup__type`).textContent = TYPE_MAP[rentItem.offer.type];
-//   cardElement.querySelector(`.popup__text--capacity`).textContent = `${rentItem.offer.rooms} ${declOfNum(rentItem.offer.rooms, [`комната`, `комнаты`, `комнат`])} для ${rentItem.offer.guests} ${declOfNum(rentItem.offer.guests, [`гостя`, `гостей`, `гостей`])}`;
-//   cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${rentItem.offer.checkin}, выезд до ${rentItem.offer.checkout}`;
-//   cardElement.querySelector(`.popup__description`).textContent = rentItem.offer.description;
-//   cardElement.querySelector(`.popup__avatar`).src = rentItem.author.avatar;
-//
-//   cardElement.querySelector(`.popup__features`).innerHTML = featuresArr.join(``);
-//   cardElement.querySelector(`.popup__photos`).innerHTML = photosArr.join(``);
-//
-//   return cardElement;
-// }
-// mapElement.insertBefore(renderPopup(dataArray[0]), filtersElement);
+function renderPopup(rentItem) {
+  const featuresArr = rentItem.offer.features.map((feature) => {
+    return `<li class="popup__feature popup__feature--${feature}">${feature}</li>`;
+  });
 
+  const photosArr = rentItem.offer.photos.map((photo) => {
+    return `<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`;
+  });
+
+  const cardElement = similarCardTemplate.cloneNode(true);
+  cardElement.querySelector(`.popup__title`).textContent = rentItem.offer.title;
+  cardElement.querySelector(`.popup__text--address`).textContent = rentItem.offer.address;
+  cardElement.querySelector(`.popup__text--price`).textContent = `${rentItem.offer.price}₽/ночь`;
+  cardElement.querySelector(`.popup__type`).textContent = TYPE_MAP[rentItem.offer.type];
+  cardElement.querySelector(`.popup__text--capacity`).textContent = `${rentItem.offer.rooms} ${declOfNum(rentItem.offer.rooms, [`комната`, `комнаты`, `комнат`])} для ${rentItem.offer.guests} ${declOfNum(rentItem.offer.guests, [`гостя`, `гостей`, `гостей`])}`;
+  cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${rentItem.offer.checkin}, выезд до ${rentItem.offer.checkout}`;
+  cardElement.querySelector(`.popup__description`).textContent = rentItem.offer.description;
+  cardElement.querySelector(`.popup__avatar`).src = rentItem.author.avatar;
+
+  cardElement.querySelector(`.popup__features`).innerHTML = featuresArr.join(``);
+  cardElement.querySelector(`.popup__photos`).innerHTML = photosArr.join(``);
+
+  return cardElement;
+}
+
+// Функция отрисовки объявления под соответсвующий аватар
+function appendPopup(popupElement) {
+  mapElement.insertBefore(popupElement, filtersElement);
+}
+
+const adHandler = function (evt) {
+  if (evt.target.matches(`button[type="button"]`)) {
+    const newElement = dataArray[Number(evt.target.dataset.id)];
+    const popupElement = renderPopup(newElement);
+    appendPopup(popupElement);
+  }
+};
+mapWindow.addEventListener(`click`, adHandler);
+// mapWindow.addEventListener(`keydown`, function (event) {
+//   if (event.which === 13) {
+//   }
+// });
+
+// Функция удаления объявления под соответсвующий аватар
+const deletePopup = function () {
+  if (adArticles) {
+    similarListElement.removeChild(adArticles);
+  }
+};
