@@ -157,7 +157,7 @@ for (let i = 0; i < 8; i++) {
   dataArray.push(rentItem);
 }
 
-// Создаем фрагмет с аватаркой
+// Создаем фрагмент с аватаркой
 const getAvatarFragment = function () {
   const avatarFragment = document.createDocumentFragment();
   for (let j = 0; j < dataArray.length; j++) {
@@ -326,22 +326,32 @@ function appendPopup(popupElement) {
   mapElement.insertBefore(popupElement, filtersElement);
 }
 
-const adHandler = function (evt) {
-  if (evt.target.matches(`button[type="button"]`)) {
-    const newElement = dataArray[Number(evt.target.dataset.id)];
-    const popupElement = renderPopup(newElement);
-    appendPopup(popupElement);
-  }
-};
-mapWindow.addEventListener(`click`, adHandler);
-// mapWindow.addEventListener(`keydown`, function (event) {
-//   if (event.which === 13) {
-//   }
-// });
+function deletePopup(popupElement) {
+  mapElement.removeChild(popupElement);
+}
 
-// Функция удаления объявления под соответсвующий аватар
-const deletePopup = function () {
-  if (adArticles) {
-    similarListElement.removeChild(adArticles);
+let popupElement = null;
+
+const popupOpenHandler = function (evt) {
+  const button = evt.target.closest(`.map__pin`);
+  if (popupElement || evt.key === `Enter`) {
+    popupElement.remove();
+  }
+  const newElement = dataArray[Number(button.dataset.id)];
+  popupElement = renderPopup(newElement);
+  appendPopup(popupElement);
+};
+
+mapWindow.addEventListener(`click`, popupOpenHandler);
+mapWindow.addEventListener(`keydown`, popupOpenHandler);
+
+const popupCloseHandler = function (evt) {
+  const button = evt.target.closest(`.popup__close`);
+  if (button || evt.key === `Escape`) {
+    deletePopup(popupElement);
+    popupElement = null;
   }
 };
+
+mapWindow.addEventListener(`click`, popupCloseHandler);
+mapWindow.addEventListener(`keydown`, popupCloseHandler);
