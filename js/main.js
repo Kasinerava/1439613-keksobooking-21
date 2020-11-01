@@ -15,13 +15,9 @@ const checkIn = adForm.querySelector(`#timein`);
 const checkOut = adForm.querySelector(`#timeout`);
 const mapFilters = document.querySelector(`.map__filters`);
 const button = similarListElement.querySelector(`.map__pin--main`);
-const adFormElement = document.querySelector(`.ad-form__element`);
 const guestsCapacity = adForm.querySelector(`#capacity`);
 const roomsForGuests = adForm.querySelector(`#room_number`);
-const formSubmit = adFormElement.querySelector(`.ad-form__submit`);
-const popupClose = similarCardTemplate.querySelector(`.popup__close`);
 const mapWindow = document.querySelector(`.map`);
-const adArticles = similarListElement.querySelector(`article`);
 
 // Создаем массив данных для объявления
 const USER_AVATARMIN = 1;
@@ -40,7 +36,7 @@ const LOCATION_XMIN = 0;
 const LOCATION_XMAX = 1200;
 const LOCATION_YMIN = 130;
 const LOCATION_YMAX = 630;
-const ARROW_HEIGHT = 18;
+// const ARROW_HEIGHT = 18;
 const PIN_WIDTH = 65;
 const PIN_HEIGHT = 65;
 const PIN_TAIL = 20;
@@ -64,12 +60,12 @@ const PALACE_MIN_PRICE = 10000;
 const MAX_PRICE = 1000000;
 
 // Параметры главной метки
-const mapPin = {
-  PIN_WIDTH,
-  PIN_HEIGHT,
-  ARROW_HEIGHT,
-  BLOCK: document.querySelector(`.map__pin--main`)
-};
+// const mapPin = {
+//   PIN_WIDTH,
+//   PIN_HEIGHT,
+//   ARROW_HEIGHT,
+//   BLOCK: document.querySelector(`.map__pin--main`)
+// };
 
 // Фунцкия разблокировки карты
 const getMapOpen = function () {
@@ -84,8 +80,8 @@ for (let field of adFormFields) {
 mapFilters.setAttribute(`disabled`, `disabled`);
 
 // Вычисление серидины пина
-const PIN_LOCATION_X = parseInt(button.style.left) - PIN_WIDTH / 2;
-const PIN_LOCATION_Y = parseInt(button.style.top) - PIN_HEIGHT / 2;
+const PIN_LOCATION_X = parseInt(button.style.left, 10) - PIN_WIDTH / 2;
+const PIN_LOCATION_Y = parseInt(button.style.top, 10) - PIN_HEIGHT / 2;
 
 // Функция вычисления адреса
 const getAddress = function () {
@@ -333,11 +329,11 @@ function deletePopup(popupElement) {
 let popupElement = null;
 
 const popupOpenHandler = function (evt) {
-  const button = evt.target.closest(`.map__pin`);
+  const buttonElement = evt.target.closest(`.map__pin`);
   if (popupElement || evt.key === `Enter`) {
     popupElement.remove();
   }
-  const newElement = dataArray[Number(button.dataset.id)];
+  const newElement = dataArray[Number(buttonElement.dataset.id)];
   popupElement = renderPopup(newElement);
   appendPopup(popupElement);
 };
@@ -346,8 +342,8 @@ mapWindow.addEventListener(`click`, popupOpenHandler);
 mapWindow.addEventListener(`keydown`, popupOpenHandler);
 
 const popupCloseHandler = function (evt) {
-  const button = evt.target.closest(`.popup__close`);
-  if (button || evt.key === `Escape`) {
+  const buttonElement = evt.target.closest(`.popup__close`);
+  if (buttonElement || evt.key === `Escape`) {
     deletePopup(popupElement);
     popupElement = null;
   }
