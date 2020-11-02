@@ -330,24 +330,30 @@ let popupElement = null;
 
 const popupOpenHandler = function (evt) {
   const buttonElement = evt.target.closest(`.map__pin`);
-  if (popupElement || evt.key === `Enter`) {
-    popupElement.remove();
+  if (buttonElement) {
+    if (popupElement || evt.key === `Enter`) {
+      popupElement.remove();
+    }
+    const newElement = dataArray[Number(buttonElement.dataset.id)];
+    popupElement = renderPopup(newElement);
+    appendPopup(popupElement);
   }
-  const newElement = dataArray[Number(buttonElement.dataset.id)];
-  popupElement = renderPopup(newElement);
-  appendPopup(popupElement);
 };
 
 mapWindow.addEventListener(`click`, popupOpenHandler);
-mapWindow.addEventListener(`keydown`, popupOpenHandler);
 
 const popupCloseHandler = function (evt) {
   const buttonElement = evt.target.closest(`.popup__close`);
-  if (buttonElement || evt.key === `Escape`) {
+  if (buttonElement) {
     deletePopup(popupElement);
     popupElement = null;
   }
 };
 
 mapWindow.addEventListener(`click`, popupCloseHandler);
-mapWindow.addEventListener(`keydown`, popupCloseHandler);
+document.addEventListener(`keydown`, (evt) => {
+  if (evt.key === `Escape`) {
+    deletePopup(popupElement);
+    popupElement = null;
+  }
+});
