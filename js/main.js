@@ -352,7 +352,7 @@ const popupCloseHandler = function (evt) {
 
 mapWindow.addEventListener(`click`, popupCloseHandler);
 document.addEventListener(`keydown`, (evt) => {
-  if (evt.key === `Escape`) {
+  if (evt.key === `Escape` && popupElement) {
     deletePopup(popupElement);
     popupElement = null;
   }
