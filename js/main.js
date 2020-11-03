@@ -1,23 +1,11 @@
 'use strict';
 
 // Определяем константы
-const similarListElement = document.querySelector(`.map__pins`);
-const similarUserTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
-const similarCardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
-const mapElement = document.querySelector(`.map`);
-const filtersElement = document.querySelector(`.map__filters-container`);
-const adForm = document.querySelector(`.ad-form`);
-const adFormFields = adForm.querySelectorAll(`fieldset`);
-const adFormAddress = adForm.querySelector(`#address`);
-const typeHouse = adForm.querySelector(`#type`);
-const priceFields = adForm.querySelector(`#price`);
-const checkIn = adForm.querySelector(`#timein`);
-const checkOut = adForm.querySelector(`#timeout`);
-const mapFilters = document.querySelector(`.map__filters`);
-const button = similarListElement.querySelector(`.map__pin--main`);
-const guestsCapacity = adForm.querySelector(`#capacity`);
-const roomsForGuests = adForm.querySelector(`#room_number`);
-const mapWindow = document.querySelector(`.map`);
+window.similarListElement = document.querySelector(`.map__pins`);
+window.adForm = document.querySelector(`.ad-form`);
+window.adFormFields = window.adForm.querySelectorAll(`fieldset`);
+window.adFormAddress = window.adForm.querySelector(`#address`);
+window.mapFilters = document.querySelector(`.map__filters`);
 
 // Создаем массив данных для объявления
 const USER_AVATARMIN = 1;
@@ -36,97 +24,16 @@ const LOCATION_XMIN = 0;
 const LOCATION_XMAX = 1200;
 const LOCATION_YMIN = 130;
 const LOCATION_YMAX = 630;
-// const ARROW_HEIGHT = 18;
-const PIN_WIDTH = 65;
-const PIN_HEIGHT = 65;
-const PIN_TAIL = 20;
-const TYPE_MAP = {
-  palace: `Дворец`,
-  flat: `Квартира`,
-  house: `Дом`,
-  bungalow: `Бунгало`
-};
-
-const FLAT_INDEX = 1;
-const BUNGALOW_INDEX = 0;
-const HOUSE_INDEX = 2;
-const PALACE_INDEX = 3;
-
-const BUNGALOW_MIN_PRICE = 0;
-const FLAT_MIN_PRICE = 1000;
-const HOUSE_MIN_PRICE = 5000;
-const PALACE_MIN_PRICE = 10000;
-
-const MAX_PRICE = 1000000;
-
-// Параметры главной метки
-// const mapPin = {
-//   PIN_WIDTH,
-//   PIN_HEIGHT,
-//   ARROW_HEIGHT,
-//   BLOCK: document.querySelector(`.map__pin--main`)
-// };
-
-// Фунцкия разблокировки карты
-const getMapOpen = function () {
-  document.querySelector(`.map`).classList.remove(`map--faded`);
-};
 
 // Переводим в неактивное состояние остальные элементы
-adForm.classList.add(`ad-form--disabled`);
-for (let field of adFormFields) {
+window.adForm.classList.add(`ad-form--disabled`);
+for (let field of window.adFormFields) {
   field.setAttribute(`disabled`, `disabled`);
 }
-mapFilters.setAttribute(`disabled`, `disabled`);
-
-// Вычисление серидины пина
-const PIN_LOCATION_X = parseInt(button.style.left, 10) - PIN_WIDTH / 2;
-const PIN_LOCATION_Y = parseInt(button.style.top, 10) - PIN_HEIGHT / 2;
-
-// Функция вычисления адреса
-const getAddress = function () {
-  adFormAddress.value = `${PIN_LOCATION_X}, ${PIN_LOCATION_Y}`;
-};
-getAddress();
-
-// Функция активации полей
-const getFieldsetActive = function () {
-  for (let field of adFormFields) {
-    field.removeAttribute(`disabled`, `disabled`);
-  }
-  mapFilters.removeAttribute(`disabled`, `disabled`);
-};
-
-// Валидация комнат и гостей
-roomsForGuests.addEventListener(`change`, function () {
-  validateRooms();
-});
-guestsCapacity.addEventListener(`change`, function () {
-  validateRooms();
-});
-
-// Переводим по клику в активное состояние карту
-button.addEventListener(`mousedown`, function (event) {
-  if (event.which === 1) {
-    getMapOpen();
-    adFormAddress.value = `${PIN_LOCATION_X}, ${PIN_LOCATION_Y + PIN_TAIL}`;
-    adForm.classList.remove(`ad-form--disabled`);
-    getFieldsetActive();
-  }
-});
-
-// Переводим по нажатию клавиши в активное состояние карту
-button.addEventListener(`keydown`, function (event) {
-  if (event.which === 13) {
-    getMapOpen();
-    adFormAddress.value = `${PIN_LOCATION_X}, ${PIN_LOCATION_Y + PIN_TAIL}`;
-    adForm.classList.remove(`ad-form--disabled`);
-    getFieldsetActive();
-  }
-});
+window.mapFilters.setAttribute(`disabled`, `disabled`);
 
 // Создаем массив
-const dataArray = [];
+window.dataArray = [];
 for (let i = 0; i < 8; i++) {
   const rentItem = {
     author: {
@@ -150,109 +57,8 @@ for (let i = 0; i < 8; i++) {
       Y: getRandomInteger(LOCATION_YMIN, LOCATION_YMAX)
     }
   };
-  dataArray.push(rentItem);
+  window.dataArray.push(rentItem);
 }
-
-// Создаем фрагмент с аватаркой
-const getAvatarFragment = function () {
-  const avatarFragment = document.createDocumentFragment();
-  for (let j = 0; j < dataArray.length; j++) {
-    const rentItem = dataArray[j];
-    const userElement = similarUserTemplate.cloneNode(true);
-    userElement.querySelector(`img`).src = rentItem.author.avatar;
-    userElement.querySelector(`img`).alt = rentItem.offer.title;
-
-    userElement.style.left = `${rentItem.location.X - PIN_WIDTH / 2}px`;
-    userElement.style.top = `${rentItem.location.Y - PIN_HEIGHT}px`;
-    userElement.dataset.id = j;
-    avatarFragment.appendChild(userElement);
-  }
-
-  similarListElement.appendChild(avatarFragment);
-};
-getAvatarFragment();
-
-// Валидация комнат
-function validateRooms() {
-  const guestsCapacityNumber = Number(guestsCapacity.value);
-  const roomsForGuestsNumber = Number(roomsForGuests.value);
-
-  if (guestsCapacityNumber === 1 && roomsForGuestsNumber === 100) {
-    roomsForGuests.setCustomValidity(`Слишком много комнат для одного человека. Выбери поменьше`);
-  } else if (guestsCapacityNumber === 2 && roomsForGuestsNumber < 2) {
-    roomsForGuests.setCustomValidity(`Вы не поместитесь, выбери больше комнат`);
-  } else if (guestsCapacityNumber === 2 && roomsForGuestsNumber > 3) {
-    roomsForGuests.setCustomValidity(`Слишком много комнат для такого количества людей, выбери местечко поменьше`);
-  } else if (guestsCapacityNumber === 3 && roomsForGuestsNumber !== 3) {
-    roomsForGuests.setCustomValidity(`Вам подойдет только место с тремя комнатами`);
-  } else if (guestsCapacityNumber === 0 && roomsForGuestsNumber < 100) {
-    roomsForGuests.setCustomValidity(`Этот замок не для гостей`);
-  } else {
-    roomsForGuests.setCustomValidity(``);
-  }
-}
-validateRooms();
-
-// Установление минимальной цены при выбранном типе жилья
-const priceChangeHandler = function () {
-  if (typeHouse.selectedIndex === BUNGALOW_INDEX) {
-    priceFields.setAttribute(`min`, String(BUNGALOW_MIN_PRICE));
-    priceFields.placeholder = `0`;
-  }
-  if (typeHouse.selectedIndex === FLAT_INDEX) {
-    priceFields.setAttribute(`min`, String(FLAT_MIN_PRICE));
-    priceFields.placeholder = `1 000`;
-  }
-  if (typeHouse.selectedIndex === HOUSE_INDEX) {
-    priceFields.setAttribute(`min`, String(HOUSE_MIN_PRICE));
-    priceFields.placeholder = `5 000`;
-  }
-  if (typeHouse.selectedIndex === PALACE_INDEX) {
-    priceFields.setAttribute(`min`, String(PALACE_MIN_PRICE));
-    priceFields.placeholder = `10 000`;
-  }
-};
-typeHouse.addEventListener(`input`, priceChangeHandler);
-
-// Установление максимальной цены за ночь
-priceFields.setAttribute(`max`, String(MAX_PRICE));
-priceFields.addEventListener(`input`, function (evt) {
-  const target = evt.target;
-  if (target.value > MAX_PRICE) {
-    target.setCustomValidity(`Невозможно установить цену больше, чем ` + MAX_PRICE);
-  } else {
-    target.setCustomValidity(``);
-  }
-});
-
-// Синхронизация времени въезда и выезда
-checkIn.addEventListener(`change`, function (evt) {
-  checkOut.value = evt.target.value;
-});
-checkOut.addEventListener(`change`, function (evt) {
-  checkIn.value = evt.target.value;
-});
-
-// Перетаскивание главного маркера
-// window.ondragstart(mapPin.BLOCK, {
-//   parentBlock: document.querySelector(`.map__pins`),
-//   direction: `both`,
-//   outputField: adFormAddress,
-//   OffsetCoord: {
-//     X: mapPin.PIN_WIDTH / 2,
-//     Y: mapPin.PIN_HEIGHT + mapPin.ARROW_HEIGHT
-//   },
-//   AvailableCoord: {
-//     X: {
-//       MIN: LocationData.X.MIN,
-//       MAX: LocationData.X.MAX
-//     },
-//     Y: {
-//       MIN: LocationData.Y.LOCATION_XMIN - mapPin.PIN_HEIGHT - mapPin.ARROW_HEIGHT,
-//       MAX: LocationData.Y.LOCATION_XMAX - mapPin.PIN_HEIGHT - mapPin.ARROW_HEIGHT,
-//     }
-//   }
-// });
 
 // Создаем функцию для рандомного элемента из массива
 function getRandomInteger(min, max) {
@@ -275,85 +81,3 @@ function getRandomArrayStroke(array) {
   }
   return result;
 }
-
-// Функция для склонения
-function declOfNum(n, textForms) {
-  n = Math.abs(n) % 100; let n1 = n % 10;
-  if (n > 10 && n < 20) {
-    return textForms[2];
-  }
-  if (n1 > 1 && n1 < 5) {
-    return textForms[1];
-  }
-  if (n1 === 1) {
-    return textForms[0];
-  }
-  return textForms[2];
-}
-
-// Объявление
-function renderPopup(rentItem) {
-  const featuresArr = rentItem.offer.features.map((feature) => {
-    return `<li class="popup__feature popup__feature--${feature}">${feature}</li>`;
-  });
-
-  const photosArr = rentItem.offer.photos.map((photo) => {
-    return `<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`;
-  });
-
-  const cardElement = similarCardTemplate.cloneNode(true);
-  cardElement.querySelector(`.popup__title`).textContent = rentItem.offer.title;
-  cardElement.querySelector(`.popup__text--address`).textContent = rentItem.offer.address;
-  cardElement.querySelector(`.popup__text--price`).textContent = `${rentItem.offer.price}₽/ночь`;
-  cardElement.querySelector(`.popup__type`).textContent = TYPE_MAP[rentItem.offer.type];
-  cardElement.querySelector(`.popup__text--capacity`).textContent = `${rentItem.offer.rooms} ${declOfNum(rentItem.offer.rooms, [`комната`, `комнаты`, `комнат`])} для ${rentItem.offer.guests} ${declOfNum(rentItem.offer.guests, [`гостя`, `гостей`, `гостей`])}`;
-  cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${rentItem.offer.checkin}, выезд до ${rentItem.offer.checkout}`;
-  cardElement.querySelector(`.popup__description`).textContent = rentItem.offer.description;
-  cardElement.querySelector(`.popup__avatar`).src = rentItem.author.avatar;
-
-  cardElement.querySelector(`.popup__features`).innerHTML = featuresArr.join(``);
-  cardElement.querySelector(`.popup__photos`).innerHTML = photosArr.join(``);
-
-  return cardElement;
-}
-
-// Функция отрисовки объявления под соответсвующий аватар
-function appendPopup(popupElement) {
-  mapElement.insertBefore(popupElement, filtersElement);
-}
-
-function deletePopup(popupElement) {
-  mapElement.removeChild(popupElement);
-}
-
-let popupElement = null;
-
-const popupOpenHandler = function (evt) {
-  const buttonElement = evt.target.closest(`.map__pin`);
-  if (buttonElement) {
-    if (popupElement || evt.key === `Enter`) {
-      popupElement.remove();
-    }
-    const newElement = dataArray[Number(buttonElement.dataset.id)];
-    popupElement = renderPopup(newElement);
-    appendPopup(popupElement);
-  }
-};
-
-mapWindow.addEventListener(`click`, popupOpenHandler);
-
-const popupCloseHandler = function (evt) {
-  const buttonElement = evt.target.closest(`.popup__close`);
-  if (buttonElement) {
-    deletePopup(popupElement);
-    popupElement = null;
-  }
-};
-
-mapWindow.addEventListener(`click`, popupCloseHandler);
-document.addEventListener(`keydown`, (evt) => {
-  if (evt.key === `Escape` && popupElement) {
-    deletePopup(popupElement);
-    popupElement = null;
-  }
-});
