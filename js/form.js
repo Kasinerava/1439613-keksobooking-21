@@ -20,7 +20,7 @@
 
   const MAX_PRICE = 1000000;
 
-// Валидация комнат и гостей
+  // Валидация комнат и гостей
   roomsForGuests.addEventListener(`change`, function () {
     validateRooms();
   });

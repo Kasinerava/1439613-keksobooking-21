@@ -65,7 +65,7 @@
   let popupElement = null;
 
   const popupOpenHandler = function (evt) {
-    const buttonElement = evt.target.closest(`.map__pin`);
+    const buttonElement = evt.target.closest(`.map__pin:not(.map__pin--main)`);
     if (buttonElement) {
       if (popupElement || evt.key === `Enter`) {
         popupElement.remove();
