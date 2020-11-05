@@ -1,10 +1,10 @@
 'use strict';
 
+window.mapElement = document.querySelector(`.map`);
+
 (function () {
   const similarCardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
-  const mapElement = document.querySelector(`.map`);
   const filtersElement = document.querySelector(`.map__filters-container`);
-  const mapWindow = document.querySelector(`.map`);
 
   const TYPE_MAP = {
     palace: `Дворец`,
@@ -55,11 +55,11 @@
 
   // Функция отрисовки объявления под соответсвующий аватар
   function appendPopup(popupElement) {
-    mapElement.insertBefore(popupElement, filtersElement);
+    window.mapElement.insertBefore(popupElement, filtersElement);
   }
 
   function deletePopup(popupElement) {
-    mapElement.removeChild(popupElement);
+    window.mapElement.removeChild(popupElement);
   }
 
   let popupElement = null;
@@ -76,7 +76,7 @@
     }
   };
 
-  mapWindow.addEventListener(`click`, popupOpenHandler);
+  window.mapElement.addEventListener(`click`, popupOpenHandler);
 
   const popupCloseHandler = function (evt) {
     const buttonElement = evt.target.closest(`.popup__close`);
@@ -86,7 +86,7 @@
     }
   };
 
-  mapWindow.addEventListener(`click`, popupCloseHandler);
+  window.mapElement.addEventListener(`click`, popupCloseHandler);
   document.addEventListener(`keydown`, (evt) => {
     if (evt.key === `Escape` && popupElement) {
       deletePopup(popupElement);

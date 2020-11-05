@@ -24,45 +24,48 @@
   };
   getAvatarFragment(window.dataArray);
 
-  // const limits = {
-  //   top: window.similarListElement.offsetTop,
-  //   right: window.similarListElement.offsetWidth - 65,
-  //   bottom: window.similarListElement.offsetHeight + window.similarListElement.offsetTop - pinMain.offsetHeight,
-  //   left: window.similarListElement.offsetLeft
-  // };
+  const limits = {
+    right: window.similarListElement.offsetWidth + window.mapElement.offsetLeft,
+    left: window.mapElement.offsetLeft
+  };
 
   pinMain.addEventListener(`mousedown`, function (evt) {
     evt.preventDefault();
 
-    let startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
+    // let startCoords = {
+    //   x: evt.clientX,
+    //   y: evt.clientY
+    // };
 
     const onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 
-      const shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
+      const position = {
+        x: moveEvt.clientX - limits.left - window.PIN_WIDTH / 2,
+        y: moveEvt.pageY - window.PIN_HEIGHT / 2
       };
+      // если вышли за левую границу
+      if (moveEvt.pageX < limits.left) {
+        position.x = -window.PIN_WIDTH / 2;
+      } else if (moveEvt.pageX > limits.right) {
+        position.x = window.similarListElement.offsetWidth - window.PIN_WIDTH / 2;
+      }
 
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
+      // если вышли за верхнюю границу
+      if (position.y < window.LOCATION_YMIN) {
+        position.y = window.LOCATION_YMIN;
+      } else if (position.y > window.LOCATION_YMAX) {
+        position.y = window.LOCATION_YMAX;
+      }
 
-      // if (startCoords.x > limits.right){
-      //   startCoords.x.value = limits.right;
-      // }
+      pinMain.style.top = position.y + `px`;
+      pinMain.style.left = position.x + `px`;
 
-      window.similarListElement.style.top = (window.similarListElement.offsetTop - shift.y) + `px`;
-      window.similarListElement.style.left = (window.similarListElement.offsetLeft - shift.x) + `px`;
+      window.adFormAddress.value = `${moveEvt.clientX - limits.left - window.PIN_WIDTH / 2}, ${moveEvt.pageY - window.PIN_HEIGHT - window.PIN_TAIL}`;
     };
 
     const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
-      window.adFormAddress.value = `${startCoords.x}, ${startCoords.y - window.PIN_HEIGHT / 2}`;
 
       document.removeEventListener(`mousemove`, onMouseMove);
       document.removeEventListener(`mouseup`, onMouseUp);

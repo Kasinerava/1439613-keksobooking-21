@@ -7,6 +7,9 @@ window.adFormFields = window.adForm.querySelectorAll(`fieldset`);
 window.adFormAddress = window.adForm.querySelector(`#address`);
 window.mapFilters = document.querySelector(`.map__filters`);
 
+window.LOCATION_YMIN = 130;
+window.LOCATION_YMAX = 630;
+
 // Создаем массив данных для объявления
 const USER_AVATARMIN = 1;
 const USER_AVATARMAX = 8;
@@ -22,8 +25,6 @@ const OFFER_DESCRIPTION = [`Кроме вас тут живут нескольк
 const OFFER_PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
 const LOCATION_XMIN = 0;
 const LOCATION_XMAX = 1200;
-const LOCATION_YMIN = 130;
-const LOCATION_YMAX = 630;
 
 // Переводим в неактивное состояние остальные элементы
 window.adForm.classList.add(`ad-form--disabled`);
@@ -41,7 +42,7 @@ for (let i = 0; i < 8; i++) {
     },
     offer: {
       title: getRandomArrayElement(OFFER_TITLE),
-      address: `${getRandomInteger(LOCATION_YMIN, LOCATION_YMAX)} ${getRandomInteger(LOCATION_XMIN, LOCATION_XMAX)}`,
+      address: `${getRandomInteger(window.LOCATION_YMIN, window.LOCATION_YMAX)} ${getRandomInteger(LOCATION_XMIN, LOCATION_XMAX)}`,
       price: getRandomArrayElement(OFFER_PRICE),
       type: getRandomArrayElement(OFFER_TYPE),
       rooms: getRandomArrayElement(OFFER_ROOMS),
@@ -54,7 +55,7 @@ for (let i = 0; i < 8; i++) {
     },
     location: {
       X: getRandomInteger(LOCATION_XMIN, LOCATION_XMAX),
-      Y: getRandomInteger(LOCATION_YMIN, LOCATION_YMAX)
+      Y: getRandomInteger(window.LOCATION_YMIN, window.LOCATION_YMAX)
     }
   };
   window.dataArray.push(rentItem);
