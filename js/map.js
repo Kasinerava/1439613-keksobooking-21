@@ -6,9 +6,9 @@ window.PIN_TAIL = 20;
 
 (function () {
   const button = window.similarListElement.querySelector(`.map__pin--main`);
-  const PIN_LOCATION_X = parseInt(button.style.left, 10) - window.PIN_WIDTH / 2;
-  const PIN_LOCATION_Y = parseInt(button.style.top, 10) - window.PIN_HEIGHT - window.PIN_TAIL;
-  const PIN_LOCATION_Y_OFF = parseInt(button.style.top, 10) - window.PIN_HEIGHT / 2;
+  const PIN_LOCATION_X = parseInt(button.style.left, 10) - Math.round(window.PIN_WIDTH / 2);
+  const PIN_LOCATION_Y = parseInt(button.style.top, 10) - Math.round(window.PIN_HEIGHT - window.PIN_TAIL);
+  const PIN_LOCATION_Y_OFF = parseInt(button.style.top, 10) - Math.round(window.PIN_HEIGHT / 2);
 
   // Функция вычисления адреса
   const getAddress = function () {

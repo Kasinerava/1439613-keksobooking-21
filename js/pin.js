@@ -41,27 +41,33 @@
       moveEvt.preventDefault();
 
       const position = {
-        x: moveEvt.clientX - limits.left - window.PIN_WIDTH / 2,
-        y: moveEvt.pageY - window.PIN_HEIGHT / 2
+        x: moveEvt.clientX - limits.left - Math.round(window.PIN_WIDTH / 2),
+        y: moveEvt.pageY - Math.round(window.PIN_HEIGHT / 2)
       };
+      window.adFormAddress.value = `${moveEvt.clientX - limits.left - Math.round(window.PIN_WIDTH / 2)}, ${moveEvt.pageY - Math.round(window.PIN_HEIGHT) - Math.round(window.PIN_TAIL)}`;
+
       // если вышли за левую границу
       if (moveEvt.pageX < limits.left) {
-        position.x = -window.PIN_WIDTH / 2;
+        position.x = -Math.round(window.PIN_WIDTH / 2);
+        window.adFormAddress.value = `${position.x}, ${moveEvt.pageY - Math.round(window.PIN_HEIGHT) - Math.round(window.PIN_TAIL)}`;
       } else if (moveEvt.pageX > limits.right) {
-        position.x = window.similarListElement.offsetWidth - window.PIN_WIDTH / 2;
+        position.x = window.similarListElement.offsetWidth - Math.round(window.PIN_WIDTH / 2);
+        window.adFormAddress.value = `${position.x}, ${moveEvt.pageY - Math.round(window.PIN_HEIGHT) - Math.round(window.PIN_TAIL)}`;
       }
 
       // если вышли за верхнюю границу
       if (position.y < window.LOCATION_YMIN) {
         position.y = window.LOCATION_YMIN;
+        window.adFormAddress.value = `${position.x}, ${position.y - window.PIN_HEIGHT - window.PIN_TAIL}`;
       } else if (position.y > window.LOCATION_YMAX) {
         position.y = window.LOCATION_YMAX;
+        window.adFormAddress.value = `${position.x}, ${position.y}`;
       }
 
       pinMain.style.top = position.y + `px`;
       pinMain.style.left = position.x + `px`;
 
-      window.adFormAddress.value = `${moveEvt.clientX - limits.left - window.PIN_WIDTH / 2}, ${moveEvt.pageY - window.PIN_HEIGHT - window.PIN_TAIL}`;
+
     };
 
     const onMouseUp = function (upEvt) {
