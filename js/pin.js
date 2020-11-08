@@ -3,10 +3,11 @@
 (function () {
   const similarUserTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
   const pinMain = window.similarListElement.querySelector(`.map__pin--main`);
+  // const MAX_SIMILAR_AVATARS = 8;
 
   // Создаем фрагмент с аватаркой
-  const getAvatarFragment = function (data) {
-    data = window.dataArray;
+  const renderAvatars = function (data) {
+    // data = window.dataArray;
     const avatarFragment = document.createDocumentFragment();
     for (let j = 0; j < data.length; j++) {
       const rentItem = data[j];
@@ -22,7 +23,24 @@
 
     window.similarListElement.appendChild(avatarFragment);
   };
-  getAvatarFragment(window.dataArray);
+  // renderAvatars(window.dataArray);
+
+  const onSuccess = function (response) {
+    // console.log(response);
+    renderAvatars(response);
+  };
+
+  const onError = function (errorMessage) {
+    const node = document.createElement(`div`);
+    node.classList.add(`error`);
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement(`afterbegin`, node);
+    setTimeout(function () {
+      node.remove();
+    }, 10000);
+  };
+
+  window.load(onSuccess, onError);
 
   const limits = {
     right: window.similarListElement.offsetWidth + window.mapElement.offsetLeft,
