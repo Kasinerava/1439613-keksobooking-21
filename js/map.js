@@ -1,9 +1,5 @@
 'use strict';
 
-window.PIN_WIDTH = 65;
-window.PIN_HEIGHT = 65;
-window.PIN_TAIL = 20;
-
 (function () {
   const button = window.similarListElement.querySelector(`.map__pin--main`);
   const PIN_LOCATION_X = parseInt(button.style.left, 10) - Math.round(window.PIN_WIDTH / 2);

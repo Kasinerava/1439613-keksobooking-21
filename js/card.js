@@ -1,8 +1,7 @@
 'use strict';
 
-window.mapElement = document.querySelector(`.map`);
-
 (function () {
+  window.mapElement = document.querySelector(`.map`);
   const similarCardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
   const filtersElement = document.querySelector(`.map__filters-container`);
 
