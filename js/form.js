@@ -14,6 +14,7 @@
   const successPopup = successTemplate.cloneNode(true);
   const errorTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
   const errorPopup = errorTemplate.cloneNode(true);
+  const errorButton = errorPopup.querySelector(`.error__button`);
   const filterCheckboxes = document.querySelectorAll(`input[type=checkbox]`);
   const adTitle = document.querySelector(`#title`);
   const adDescription = document.querySelector(`#description`);
@@ -57,6 +58,7 @@
       roomsForGuests.setCustomValidity(``);
     }
   }
+
   validateRooms();
 
   // Установление минимальной цены при выбранном типе жилья
@@ -117,6 +119,9 @@
     roomsForGuests.selectedIndex = 0;
     checkIn.selectedIndex = 0;
     checkOut.selectedIndex = 0;
+
+    resetMainPin();
+    window.deletePopup();
   };
 
   const successHandler = function () {
@@ -126,14 +131,23 @@
 
   // Возвращение пина на свое место
   const resetMainPin = function () {
-    window.pinMain.style.top = 537 + `px`;
-    window.pinMain.style.left = 342 + `px`;
+    window.pinMain.style.top = 375 + `px`;
+    window.pinMain.style.left = 570 + `px`;
+    window.adFormAddress.value = `${570 - Math.round(window.PIN_WIDTH / 2)}, ${375 - Math.round(window.PIN_HEIGHT / 2)}`;
+
   };
 
-  // Окно успешной загрузки
+  // Удалить окно успешной загрузки
   const removeSuccessPopup = function () {
     if (successHandler) {
       window.mapElement.removeChild(successPopup);
+    }
+  };
+
+  // Удалить окно ошибки
+  const removeErrorPopup = function () {
+    if (errorHandler) {
+      window.mapElement.removeChild(errorPopup);
     }
   };
 
@@ -141,7 +155,6 @@
     if (successPopup) {
       removeSuccessPopup();
       resetForm();
-      resetMainPin();
     }
   });
 
@@ -149,7 +162,6 @@
     if (evt.key === `Escape` && successPopup) {
       removeSuccessPopup();
       resetForm();
-      resetMainPin();
     }
   });
 
@@ -158,15 +170,34 @@
     window.mapElement.appendChild(errorPopup);
   };
 
+  errorButton.addEventListener(`click`, function () {
+    if (errorPopup) {
+      removeErrorPopup();
+      resetForm();
+    }
+  });
+
+  document.addEventListener(`click`, function () {
+    if (errorPopup) {
+      removeErrorPopup();
+      resetForm();
+    }
+  });
+
+  document.addEventListener(`keydown`, function (evt) {
+    if (evt.key === `Escape` && errorPopup) {
+      removeErrorPopup();
+      resetForm();
+    }
+  });
+
   resetButton.addEventListener(`click`, function () {
     resetForm();
-    resetMainPin();
   });
 
   resetButton.addEventListener(`keydown`, function (evt) {
     if (evt.key === `Escape` && successPopup) {
       resetForm();
-      resetMainPin();
     }
   });
 

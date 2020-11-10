@@ -2,7 +2,7 @@
 
 (function () {
   window.mapElement = document.querySelector(`.map`);
-  const similarCardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
+  window.similarCardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
   const filtersElement = document.querySelector(`.map__filters-container`);
 
   const TYPE_MAP = {
@@ -36,7 +36,7 @@
       return `<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`;
     });
 
-    const cardElement = similarCardTemplate.cloneNode(true);
+    const cardElement = window.similarCardTemplate.cloneNode(true);
     cardElement.querySelector(`.popup__title`).textContent = rentItem.offer.title;
     cardElement.querySelector(`.popup__text--address`).textContent = rentItem.offer.address;
     cardElement.querySelector(`.popup__text--price`).textContent = `${rentItem.offer.price}₽/ночь`;
@@ -57,9 +57,9 @@
     window.mapElement.insertBefore(popupElement, filtersElement);
   }
 
-  function deletePopup(popupElement) {
-    window.mapElement.removeChild(popupElement);
-  }
+  window.deletePopup = () => {
+    popupElement.remove();
+  };
 
   let popupElement = null;
 
@@ -80,7 +80,7 @@
   const popupCloseHandler = function (evt) {
     const buttonElement = evt.target.closest(`.popup__close`);
     if (buttonElement) {
-      deletePopup(popupElement);
+      window.deletePopup();
       popupElement = null;
     }
   };
@@ -88,7 +88,7 @@
   window.mapElement.addEventListener(`click`, popupCloseHandler);
   document.addEventListener(`keydown`, (evt) => {
     if (evt.key === `Escape` && popupElement) {
-      deletePopup(popupElement);
+      window.deletePopup();
       popupElement = null;
     }
   });

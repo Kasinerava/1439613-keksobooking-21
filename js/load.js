@@ -2,7 +2,7 @@
 
 (function () {
   window.URL_LOAD = `https://21.javascript.pages.academy/keksobooking/data`;
-  window.URL_SEND = `https://21.javascript.pages.academy/keksobooking`;
+  window.URL_SEND = `https://21.javascript.pages.academy/keksobookig`;
   window.TIMEOUT_IN_MS = 10000;
 
 
