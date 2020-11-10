@@ -16,8 +16,6 @@
   const errorPopup = errorTemplate.cloneNode(true);
   const errorButton = errorPopup.querySelector(`.error__button`);
   const filterCheckboxes = document.querySelectorAll(`input[type=checkbox]`);
-  const adTitle = document.querySelector(`#title`);
-  const adDescription = document.querySelector(`#description`);
 
   const FLAT_INDEX = 1;
   const BUNGALOW_INDEX = 0;
@@ -109,9 +107,7 @@
       }
     });
 
-    adTitle.value = ``;
-    priceFields.value = ``;
-    adDescription.value = ``;
+    adForm.reset();
 
     document.querySelector(`.map`).classList.add(`map--faded`);
     window.adForm.classList.add(`ad-form--disabled`);
@@ -134,32 +130,31 @@
     window.pinMain.style.top = 375 + `px`;
     window.pinMain.style.left = 570 + `px`;
     window.adFormAddress.value = `${570 - Math.round(window.PIN_WIDTH / 2)}, ${375 - Math.round(window.PIN_HEIGHT / 2)}`;
-
   };
 
   // Удалить окно успешной загрузки
   const removeSuccessPopup = function () {
-    if (successHandler) {
+    if (window.mapElement.contains(successPopup)) {
       window.mapElement.removeChild(successPopup);
     }
   };
 
   // Удалить окно ошибки
   const removeErrorPopup = function () {
-    if (errorHandler) {
+    if (window.mapElement.contains(errorPopup)) {
       window.mapElement.removeChild(errorPopup);
     }
   };
 
   document.addEventListener(`click`, function () {
-    if (successPopup) {
+    if (window.mapElement.contains(successPopup)) {
       removeSuccessPopup();
       resetForm();
     }
   });
 
   document.addEventListener(`keydown`, function (evt) {
-    if (evt.key === `Escape` && successPopup) {
+    if (evt.key === `Escape` && window.mapElement.contains(successPopup)) {
       removeSuccessPopup();
       resetForm();
     }
@@ -171,32 +166,33 @@
   };
 
   errorButton.addEventListener(`click`, function () {
-    if (errorPopup) {
+    if (window.mapElement.contains(errorPopup)) {
       removeErrorPopup();
       resetForm();
     }
   });
 
   document.addEventListener(`click`, function () {
-    if (errorPopup) {
+    if (window.mapElement.contains(errorPopup)) {
       removeErrorPopup();
       resetForm();
     }
   });
 
   document.addEventListener(`keydown`, function (evt) {
-    if (evt.key === `Escape` && errorPopup) {
+    if (evt.key === `Escape` && window.mapElement.contains(errorPopup)) {
       removeErrorPopup();
       resetForm();
     }
   });
 
-  resetButton.addEventListener(`click`, function () {
+  resetButton.addEventListener(`click`, function (evt) {
+    evt.preventDefault();
     resetForm();
   });
 
   resetButton.addEventListener(`keydown`, function (evt) {
-    if (evt.key === `Escape` && successPopup) {
+    if (evt.key === `Escape` && window.mapElement.contains(successPopup)) {
       resetForm();
     }
   });

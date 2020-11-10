@@ -62,10 +62,9 @@
       }
 
       // если вышли за верхнюю границу
-      if (position.y < 130) {
+      if (position.y < window.LOCATION_YMIN) {
         position.y = window.LOCATION_YMIN;
-
-      } else if (position.y > 630) {
+      } else if (position.y > window.LOCATION_YMAX) {
         position.y = window.LOCATION_YMAX;
       }
 

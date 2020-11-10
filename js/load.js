@@ -25,9 +25,6 @@
     });
     xhr.timeout = window.TIMEOUT_IN_MS;
     return xhr;
-
-    // xhr.open(`GET`, URL);
-    // xhr.send();
   };
 
   const load = function (onSuccess, onError) {
