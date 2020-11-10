@@ -7,6 +7,16 @@
   const priceFields = window.adForm.querySelector(`#price`);
   const checkIn = window.adForm.querySelector(`#timein`);
   const checkOut = window.adForm.querySelector(`#timeout`);
+  const notice = document.querySelector(`.notice`);
+  const adForm = notice.querySelector(`.ad-form`);
+  const resetButton = adForm.querySelector(`.ad-form__reset`);
+  const successTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
+  const successPopup = successTemplate.cloneNode(true);
+  const errorTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
+  const errorPopup = errorTemplate.cloneNode(true);
+  const filterCheckboxes = document.querySelectorAll(`input[type=checkbox]`);
+  const adTitle = document.querySelector(`#title`);
+  const adDescription = document.querySelector(`#description`);
 
   const FLAT_INDEX = 1;
   const BUNGALOW_INDEX = 0;
@@ -87,5 +97,81 @@
   });
   checkOut.addEventListener(`change`, function (evt) {
     checkIn.value = evt.target.value;
+  });
+
+  // Сброс после успешного заполнения формы
+  const resetForm = function () {
+    filterCheckboxes.forEach(function (element) {
+      if (element.checked) {
+        element.checked = false;
+      }
+    });
+
+    adTitle.value = ``;
+    priceFields.value = ``;
+    adDescription.value = ``;
+
+    document.querySelector(`.map`).classList.add(`map--faded`);
+    window.adForm.classList.add(`ad-form--disabled`);
+    guestsCapacity.selectedIndex = 0;
+    roomsForGuests.selectedIndex = 0;
+    checkIn.selectedIndex = 0;
+    checkOut.selectedIndex = 0;
+  };
+
+  const successHandler = function () {
+    window.mapElement.appendChild(successPopup);
+    resetForm();
+  };
+
+  // Возвращение пина на свое место
+  const resetMainPin = function () {
+    window.pinMain.style.top = 537 + `px`;
+    window.pinMain.style.left = 342 + `px`;
+  };
+
+  // Окно успешной загрузки
+  const removeSuccessPopup = function () {
+    if (successHandler) {
+      window.mapElement.removeChild(successPopup);
+    }
+  };
+
+  document.addEventListener(`click`, function () {
+    if (successPopup) {
+      removeSuccessPopup();
+      resetForm();
+      resetMainPin();
+    }
+  });
+
+  document.addEventListener(`keydown`, function (evt) {
+    if (evt.key === `Escape` && successPopup) {
+      removeSuccessPopup();
+      resetForm();
+      resetMainPin();
+    }
+  });
+
+  // Окно ошибки
+  const errorHandler = function () {
+    window.mapElement.appendChild(errorPopup);
+  };
+
+  resetButton.addEventListener(`click`, function () {
+    resetForm();
+    resetMainPin();
+  });
+
+  resetButton.addEventListener(`keydown`, function (evt) {
+    if (evt.key === `Escape` && successPopup) {
+      resetForm();
+      resetMainPin();
+    }
+  });
+
+  adForm.addEventListener(`submit`, function (evt) {
+    window.backend.send(new FormData(adForm), successHandler, errorHandler);
+    evt.preventDefault();
   });
 })();

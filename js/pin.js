@@ -2,7 +2,7 @@
 
 (function () {
   const similarUserTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
-  const pinMain = window.similarListElement.querySelector(`.map__pin--main`);
+  window.pinMain = window.similarListElement.querySelector(`.map__pin--main`);
 
   // Создаем фрагмент с аватаркой
   const renderAvatars = function (data) {
@@ -36,15 +36,14 @@
       node.remove();
     }, 10000);
   };
-
-  window.load(onSuccess, onError);
+  window.backend.load(onSuccess, onError);
 
   const limits = {
     right: window.similarListElement.offsetWidth + window.mapElement.offsetLeft,
     left: window.mapElement.offsetLeft
   };
 
-  pinMain.addEventListener(`mousedown`, function (evt) {
+  window.pinMain.addEventListener(`mousedown`, function (evt) {
     evt.preventDefault();
 
     const onMouseMove = function (moveEvt) {
@@ -70,8 +69,8 @@
         position.y = window.LOCATION_YMAX;
       }
 
-      pinMain.style.top = position.y + `px`;
-      pinMain.style.left = position.x + `px`;
+      window.pinMain.style.top = position.y + `px`;
+      window.pinMain.style.left = position.x + `px`;
 
       window.adFormAddress.value = `${position.x + Math.round(window.PIN_WIDTH / 2)}, ${position.y + window.PIN_HEIGHT + window.PIN_TAIL}`;
     };
