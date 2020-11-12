@@ -58,7 +58,9 @@
   }
 
   window.deletePopup = () => {
-    popupElement.remove();
+    if (popupElement) {
+      popupElement.remove();
+    }
   };
 
   let popupElement = null;

@@ -115,7 +115,8 @@
     roomsForGuests.selectedIndex = 0;
     checkIn.selectedIndex = 0;
     checkOut.selectedIndex = 0;
-
+    window.mapFilters.setAttribute(`disabled`, `disabled`);
+    window.getFormFieldDisabled();
     resetMainPin();
     window.deletePopup();
   };
