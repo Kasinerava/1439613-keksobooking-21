@@ -14,7 +14,7 @@
   window.LOCATION_YMIN = 130 - window.PIN_HEIGHT - window.PIN_TAIL;
   window.LOCATION_YMAX = 630 - window.PIN_HEIGHT - window.PIN_TAIL;
 
-  window.getFormFieldDisabled = function () {
+  window.setFormFieldDisabled = function () {
     for (let field of window.adFormFields) {
       field.setAttribute(`disabled`, `disabled`);
     }
@@ -23,5 +23,5 @@
   // Переводим в неактивное состояние остальные элементы
   window.adForm.classList.add(`ad-form--disabled`);
   window.mapFilters.setAttribute(`disabled`, `disabled`);
-  window.getFormFieldDisabled();
+  window.setFormFieldDisabled();
 })();

@@ -7,7 +7,8 @@
   // Создаем фрагмент с аватаркой
   window.renderAvatars = function (data) {
     const avatarFragment = document.createDocumentFragment();
-    for (let j = 0; j < MAX_SIMILAR_AD_COUNT; j++) {
+    const loopMax = data.length < MAX_SIMILAR_AD_COUNT ? data.length : MAX_SIMILAR_AD_COUNT;
+    for (let j = 0; j < loopMax; j++) {
       const rentItem = data[j];
       const userElement = similarUserTemplate.cloneNode(true);
       userElement.querySelector(`img`).src = rentItem.author.avatar;
@@ -42,32 +43,21 @@
   const filter = document.querySelector(`.map__filters`);
   const housingType = filter.querySelector(`#housing-type`);
 
-  // let items = [];
-  let typeHousing = `flat`;
+  const removePins = function () {
+    const basicPins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
+    basicPins.forEach(function (it) {
+      it.remove();
+    });
+  };
 
   function filterItemsByType(type) {
-    return window.dataArray.filter((rentItem) => rentItem.offer.type === typeHousing);
+    return window.dataArray.filter((rentItem) => rentItem.offer.type === type);
   }
 
-  housingType.addEventListener(`click`, function (evt) {
-    const type = housingType.value;
-    this.value = type;
-    // typeHousing = type;
+  housingType.addEventListener(`change`, function (evt) {
+    removePins();
+    window.deletePopup();
     window.renderAvatars(filterItemsByType(evt.target.value));
   });
-
-  // function filterItemsByType () {
-  //   const sameTypeHousing = window.dataArray.filter(function (data) {
-  //     return rentItem.offer.type === typeHousing;
-  //   });
-  //   window.renderAvatars(sameTypeHousing);
-  // }
-  //
-  // housingType.addEventListener(`click`, function (evt) {
-  //   const type = housingType.value;
-  //   this.value = type;
-  //   filterItemsByType();
-  // });
-
-
-})();
+}
+)();
