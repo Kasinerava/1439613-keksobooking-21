@@ -16,7 +16,7 @@
 
       userElement.style.left = `${rentItem.location.x - window.PIN_WIDTH / 2}px`;
       userElement.style.top = `${rentItem.location.y - window.PIN_HEIGHT}px`;
-      userElement.dataset.id = j;
+      userElement.dataset.id = data[j].id;
       avatarFragment.appendChild(userElement);
     }
 
@@ -25,6 +25,9 @@
 
 
   const onSuccess = function (response) {
+    for (let i = 0; i < response.length; i++) {
+      response[i].id = i;
+    }
     window.dataArray = response;
     window.renderAvatars(response);
   };
