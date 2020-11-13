@@ -70,7 +70,6 @@
 
       window.pinMain.style.top = position.y + `px`;
       window.pinMain.style.left = position.x + `px`;
-
       window.adFormAddress.value = `${position.x + Math.round(window.PIN_WIDTH / 2)}, ${position.y + window.PIN_HEIGHT + window.PIN_TAIL}`;
     };
 
