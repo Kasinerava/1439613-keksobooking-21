@@ -11,6 +11,25 @@
   window.pinMain.addEventListener(`mousedown`, function (evt) {
     evt.preventDefault();
 
+    const onSuccess = function (response) {
+      for (let i = 0; i < response.length; i++) {
+        response[i].id = i;
+      }
+      window.dataArray = response;
+      window.renderAvatars(response);
+    };
+
+    const onError = function (errorMessage) {
+      const node = document.createElement(`div`);
+      node.classList.add(`error`);
+      node.textContent = errorMessage;
+      document.body.insertAdjacentElement(`afterbegin`, node);
+      setTimeout(function () {
+        node.remove();
+      }, 10000);
+    };
+    window.backend.load(onSuccess, onError);
+
     const onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 

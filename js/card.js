@@ -65,15 +65,29 @@
 
   let popupElement = null;
 
+  // Установка класса
+  // const activatePin = function (pin) {
+  //   deactivatePin();
+  //   pin.classList.add(`map__pin--active`);
+  //   popupElement = pin;
+  // };
+  //
+  // const deactivatePin = function () {
+  //   if (popupElement) {
+  //     popupElement.classList.remove(`map__pin--active`);
+  //   }
+  // };
+
   const popupOpenHandler = function (evt) {
     const buttonElement = evt.target.closest(`.map__pin:not(.map__pin--main)`);
     if (buttonElement) {
       if (popupElement || evt.key === `Enter`) {
         popupElement.remove();
       }
-      const newElement = window.dataArray[Number(buttonElement.dataset.id)];
+      const newElement = window.dataArray.find((ad) => ad.id === Number(buttonElement.dataset.id));
       popupElement = renderPopup(newElement);
       appendPopup(popupElement);
+      // activatePin(pin);
     }
   };
 
