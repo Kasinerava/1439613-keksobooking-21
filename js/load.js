@@ -4,7 +4,8 @@
   window.URL_LOAD = `https://21.javascript.pages.academy/keksobooking/data`;
   window.URL_SEND = `https://21.javascript.pages.academy/keksobooking`;
   window.TIMEOUT_IN_MS = 10000;
-
+  const DEBOUNCE_INTERVAL = 500;
+  let lastTimeout;
 
   const setup = function (onSuccess, onError) {
     const xhr = new XMLHttpRequest();
@@ -39,9 +40,18 @@
     xhr.send(data);
   };
 
+
+  const debounce = function (fun) {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
+  };
+
   window.backend = {
     load,
-    send
+    send,
+    debounce
   };
 })();
 

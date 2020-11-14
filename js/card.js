@@ -4,6 +4,7 @@
   window.mapElement = document.querySelector(`.map`);
   window.similarCardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
   const filtersElement = document.querySelector(`.map__filters-container`);
+  window.activePin = window.similarListElement.querySelector(`.map__pin--active`);
 
   const TYPE_MAP = {
     palace: `Дворец`,
@@ -66,17 +67,17 @@
   let popupElement = null;
 
   // Установка класса
-  // const activatePin = function (pin) {
-  //   deactivatePin();
-  //   pin.classList.add(`map__pin--active`);
-  //   popupElement = pin;
-  // };
-  //
-  // const deactivatePin = function () {
-  //   if (popupElement) {
-  //     popupElement.classList.remove(`map__pin--active`);
-  //   }
-  // };
+  const activatePin = function (buttonElement) {
+    if (window.activePin) {
+      deactivatePin();
+    } else {
+      buttonElement.classList.add(`map__pin--active`);
+    }
+  };
+
+  const deactivatePin = function () {
+    window.activePin.classList.remove(`map__pin--active`);
+  };
 
   const popupOpenHandler = function (evt) {
     const buttonElement = evt.target.closest(`.map__pin:not(.map__pin--main)`);
@@ -87,7 +88,7 @@
       const newElement = window.dataArray.find((ad) => ad.id === Number(buttonElement.dataset.id));
       popupElement = renderPopup(newElement);
       appendPopup(popupElement);
-      // activatePin(pin);
+      activatePin(buttonElement);
     }
   };
 
@@ -98,6 +99,7 @@
     if (buttonElement) {
       window.deletePopup();
       popupElement = null;
+      deactivatePin();
     }
   };
 
@@ -106,6 +108,7 @@
     if (evt.key === `Escape` && popupElement) {
       window.deletePopup();
       popupElement = null;
+      deactivatePin();
     }
   });
 })();
