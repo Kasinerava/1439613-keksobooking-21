@@ -91,4 +91,5 @@
       window.renderAvatars(filterItemsByGuests(evt.target));
     }
   });
+  
 })();
