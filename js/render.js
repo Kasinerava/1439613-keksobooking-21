@@ -25,7 +25,7 @@
 
   const filter = document.querySelector(`.map__filters`);
 
-  const removePins = function () {
+  window.removePins = function () {
     const basicPins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
     basicPins.forEach(function (it) {
       it.remove();
@@ -34,7 +34,7 @@
 
   // Новые отфильтрованные объявления
   const renderNewAvatars = function () {
-    removePins();
+    window.removePins();
     window.deletePopup();
     window.renderAvatars(filterAds(window.dataArray));
   };
@@ -99,7 +99,7 @@
     const guests = mapFilter.get(`housing-guests`);
     const features = mapFilter.getAll(`features`);
 
-    const newArray = [];
+    const newAvatars = [];
 
     for (let i = 0; i < data.length; i++) {
       const item = data[i];
@@ -110,12 +110,12 @@
         filterItemsByGuests(item, guests) &&
         filterItemsByFeatures(item, features)
       ) {
-        newArray.push(item);
+        newAvatars.push(item);
       }
-      if (newArray.length === MAX_SIMILAR_AD_COUNT) {
+      if (newAvatars.length === MAX_SIMILAR_AD_COUNT) {
         break;
       }
     }
-    return newArray;
+    return newAvatars;
   }
 })();

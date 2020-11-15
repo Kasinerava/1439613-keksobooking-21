@@ -119,6 +119,8 @@
     window.setFormFieldDisabled();
     resetMainPin();
     window.deletePopup();
+    window.removePins();
+    window.shouldLoadData = true;
   };
 
   const successHandler = function () {
@@ -181,7 +183,8 @@
   });
 
   document.addEventListener(`keydown`, function (evt) {
-    if (evt.key === `Escape` && window.mapElement.contains(errorPopup)) {
+    if (evt.key === `Escape` && window.mapElement.contains(errorPopup) && window.shouldLoadData) {
+      window.setFormFieldDisabled();
       removeErrorPopup();
       resetForm();
     }

@@ -1246,3 +1246,8 @@ fieldset {
 .hidden {
   display: none;
 }
+
+.ad-form input:invalid,
+.ad-form select:invalid {
+  outline: solid 2px red;
+}

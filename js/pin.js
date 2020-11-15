@@ -2,7 +2,7 @@
 
 (function () {
   window.pinMain = window.similarListElement.querySelector(`.map__pin--main`);
-  let shouldLoadData = true;
+  window.shouldLoadData = true;
 
   const limits = {
     right: window.similarListElement.offsetWidth + window.mapElement.offsetLeft,
@@ -24,14 +24,16 @@
       const node = document.createElement(`div`);
       node.classList.add(`error`);
       node.textContent = errorMessage;
+      node.style.color = `#fff`;
+      window.shouldLoadData = true;
       document.body.insertAdjacentElement(`afterbegin`, node);
       setTimeout(function () {
         node.remove();
       }, 10000);
     };
 
-    if (shouldLoadData) {
-      shouldLoadData = false;
+    if (window.shouldLoadData) {
+      window.shouldLoadData = false;
       window.backend.load(onSuccess, onError);
     }
 
