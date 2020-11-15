@@ -2,6 +2,7 @@
 
 (function () {
   window.pinMain = window.similarListElement.querySelector(`.map__pin--main`);
+  let shouldLoadData = true;
 
   const limits = {
     right: window.similarListElement.offsetWidth + window.mapElement.offsetLeft,
@@ -28,7 +29,11 @@
         node.remove();
       }, 10000);
     };
-    window.backend.load(onSuccess, onError);
+
+    if (shouldLoadData) {
+      shouldLoadData = false;
+      window.backend.load(onSuccess, onError);
+    }
 
     const onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();

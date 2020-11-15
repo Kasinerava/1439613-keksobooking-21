@@ -24,11 +24,6 @@
   };
 
   const filter = document.querySelector(`.map__filters`);
-  const housingType = filter.querySelector(`#housing-type`);
-  const housingPrice = filter.querySelector(`#housing-price`);
-  const housingRooms = filter.querySelector(`#housing-rooms`);
-  const housingGuests = filter.querySelector(`#housing-guests`);
-  const housingFeatures = filter.querySelector(`#housing-features`);
 
   const removePins = function () {
     const basicPins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
@@ -37,59 +32,90 @@
     });
   };
 
+  // Новые отфильтрованные объявления
+  const renderNewAvatars = function () {
+    removePins();
+    window.deletePopup();
+    window.renderAvatars(filterAds(window.dataArray));
+  };
+
+  // Устранение дребезга
+  filter.addEventListener(`change`, function () {
+    window.backend.debounce(renderNewAvatars, 500);
+  });
+
   // Фильтр для типа жилья
-  function filterItemsByType(type) {
+  function filterItemsByType(rentItem, type) {
     if (type === `any`) {
-      window.renderAvatars(window.dataArray);
+      return true;
+    } else {
+      return rentItem.offer.type === type;
     }
-    return window.dataArray.filter((rentItem) => rentItem.offer.type === type);
   }
 
   // Фильтр для количества гостей
-  function filterItemsByGuests(housingGuests) {
-    if (housingGuests === `any`) {
-      window.renderAvatars(window.dataArray);
+  function filterItemsByGuests(rentItem, guests) {
+    if (guests === `any`) {
+      return true;
     }
-    return window.dataArray.filter((rentItem) => rentItem.offer.guests.toString() === housingGuests.value);
+    return rentItem.offer.guests === Number(guests);
   }
 
   // Фильтр для цены
-  function filterItemsByRooms(housingPrice) {
-    if (housingPrice.value === `low`) {
-      return window.dataArray.filter((rentItem) => rentItem.offer.price < 10000);
-    } else if (housingPrice.value === `middle`) {
-      return window.dataArray.filter((rentItem) => rentItem.offer.price >= 10000 && rentItem.offer.price <= 50000);
-    } else if (housingPrice.value === `high`) {
-      return window.dataArray.filter((rentItem) => rentItem.offer.price > 50000);
+  function filterItemsByPrice(rentItem, price) {
+    if (price === `low`) {
+      return rentItem.offer.price < 10000;
+    } else if (price === `middle`) {
+      return rentItem.offer.price >= 10000 && rentItem.offer.price <= 50000;
+    } else if (price === `high`) {
+      return rentItem.offer.price > 50000;
     } else {
-      window.renderAvatars(window.dataArray);
+      return true;
     }
   }
 
   // Фильтр для количества комнат
-  function filterItemsByRooms(housingRooms) {
-    if (housingRooms === `any`) {
-      window.renderAvatars(window.dataArray);
+  function filterItemsByRooms(rentItem, rooms) {
+    if (rooms === `any`) {
+      return true;
     }
-    return window.dataArray.filter((rentItem) => rentItem.offer.rooms.toString() === housingRooms.value);
+    return rentItem.offer.rooms.toString() === rooms;
   }
 
-  // Фильтр для фичей ??
-  function filterItemsByFeatures(features) {
-    const checkedElements = features.querySelectorAll(`input[type=checkbox]:checked`);
-    return Array.from(checkedElements).every(function (element) {
-      return features.offer.features.includes(element.value);
-    });
+  // Фильтр для фичей
+  function filterItemsByFeatures(rentItem, features) {
+    if (features.length === 0) {
+      return true;
+    }
+    return features.every((feature) => rentItem.offer.features.includes(feature));
   }
 
-  filter.addEventListener(`change`, function (evt) {
-    removePins();
-    window.deletePopup();
-    if (evt.target.value === `any`) {
-      return window.renderAvatars(filterItemsByGuests(evt.target.value));
-    } else {
-      window.renderAvatars(filterItemsByGuests(evt.target));
+  function filterAds(data) {
+    const mapFilter = new FormData(document.querySelector(`.map__filters`));
+
+    const type = mapFilter.get(`housing-type`);
+    const price = mapFilter.get(`housing-price`);
+    const rooms = mapFilter.get(`housing-rooms`);
+    const guests = mapFilter.get(`housing-guests`);
+    const features = mapFilter.getAll(`features`);
+
+    const newArray = [];
+
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+      if (
+        filterItemsByType(item, type) &&
+        filterItemsByPrice(item, price) &&
+        filterItemsByRooms(item, rooms) &&
+        filterItemsByGuests(item, guests) &&
+        filterItemsByFeatures(item, features)
+      ) {
+        newArray.push(item);
+      }
+      if (newArray.length === MAX_SIMILAR_AD_COUNT) {
+        break;
+      }
     }
-  });
-  
+    return newArray;
+  }
 })();
