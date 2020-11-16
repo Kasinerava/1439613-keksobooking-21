@@ -48,9 +48,7 @@
   function filterItemsByType(rentItem, type) {
     if (type === `any`) {
       return true;
-    } else {
-      return rentItem.offer.type === type;
-    }
+    } return rentItem.offer.type === type;
   }
 
   // Фильтр для количества гостей
@@ -69,9 +67,7 @@
       return rentItem.offer.price >= 10000 && rentItem.offer.price <= 50000;
     } else if (price === `high`) {
       return rentItem.offer.price > 50000;
-    } else {
-      return true;
-    }
+    } return true;
   }
 
   // Фильтр для количества комнат

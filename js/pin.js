@@ -4,13 +4,16 @@
   window.pinMain = window.similarListElement.querySelector(`.map__pin--main`);
   window.shouldLoadData = true;
 
-  const limits = {
-    right: window.similarListElement.offsetWidth + window.mapElement.offsetLeft,
-    left: window.mapElement.offsetLeft
-  };
+  function calculateLimits() {
+    return {
+      right: window.similarListElement.offsetWidth + window.mapElement.offsetLeft,
+      left: window.mapElement.offsetLeft
+    };
+  }
 
   window.pinMain.addEventListener(`mousedown`, function (evt) {
     evt.preventDefault();
+    const limits = calculateLimits();
 
     const onSuccess = function (response) {
       for (let i = 0; i < response.length; i++) {

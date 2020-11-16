@@ -183,7 +183,7 @@
   });
 
   document.addEventListener(`keydown`, function (evt) {
-    if (evt.key === `Escape` && window.mapElement.contains(errorPopup) && window.shouldLoadData) {
+    if (evt.key === `Escape` && window.mapElement.contains(errorPopup)) {
       window.setFormFieldDisabled();
       removeErrorPopup();
       resetForm();
